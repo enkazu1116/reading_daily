@@ -136,7 +136,26 @@ Missing `Cf-Access-Authenticated-User-Email` → **401**.
 
 ### `finished_at`
 
-Set **only** when `status` changes **to** `finished`. Never cleared or updated on other status changes.
+- Set when `status` changes **to** `finished`
+- Cleared (`null`) when `status` changes **from** `finished` to `tsundoku` or `reading`
+- Unchanged on memo/page-only updates that do not change `status`
+
+```sh
+# Mark finished, then leave finished — finishedAt becomes null
+ID="<reading-id>"
+curl -s -X PATCH "$BASE/readings/$ID" \
+  -H "Content-Type: application/json" \
+  -H "Cf-Access-Authenticated-User-Email: $EMAIL" \
+  -d '{"status":"finished"}'
+
+curl -s -X PATCH "$BASE/readings/$ID" \
+  -H "Content-Type: application/json" \
+  -H "Cf-Access-Authenticated-User-Email: $EMAIL" \
+  -d '{"status":"reading"}' | jq .reading.finishedAt
+# => null
+```
+
+Run `npm test` for `finished_at` transition checks and ASCII tokenizer coverage.
 
 ### Stats
 

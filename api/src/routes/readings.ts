@@ -5,6 +5,7 @@ import { deleteFts, readingSearchText, upsertFts } from '../fts';
 import { fetchGoogleBookById, findOrCreateBook } from '../services/google-books';
 import { getTokenizer } from '../tokenizer';
 import { nowIso } from '../time';
+import { resolveFinishedAt } from '../readings-status';
 
 const VALID_STATUSES: ReadingStatus[] = ['tsundoku', 'reading', 'finished'];
 
@@ -199,10 +200,11 @@ readingsRoutes.patch('/:id', async (c) => {
   }
 
   const nextStatus = (body.status as ReadingStatus | undefined) ?? existing.status;
-  let finishedAt = existing.finished_at;
-  if (body.status !== undefined && nextStatus === 'finished' && existing.status !== 'finished') {
-    finishedAt = nowIso();
-  }
+  const finishedAt = resolveFinishedAt(
+    existing,
+    nextStatus,
+    body.status !== undefined,
+  );
 
   const updated: Reading = {
     ...existing,
