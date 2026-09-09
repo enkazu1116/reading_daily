@@ -4,29 +4,22 @@
 
 ## 構成
 
-| Directory | Purpose |
-|-----------|---------|
-| `web/` | SvelteKit frontend (Cloudflare Pages) — see [web/README.md](web/README.md) |
-| `api/` | Workers API — **deploy from here** (MoonBit-first + thin `worker.ts`; see [api/README.md](api/README.md)) |
-| `infra/` | Terraform (D1, KV, Access, Pages). Worker stub at `infra/worker/` is replaced by `api/` on deploy |
+| ディレクトリ | 説明 |
+|-------------|------|
+| `web/` | SvelteKit フロントエンド（Cloudflare Pages） |
+| `api/` | Workers API（TypeScript + Moonbit WASM） |
+| `infra/` | Terraform |
 
-## Local development
+各ディレクトリは独立して開発・デプロイできます。`web/` は現時点で実装済みです。
 
-| Service | Port | Notes |
-|---------|------|-------|
-| web | `43123` | `PUBLIC_API_URL=http://localhost:48721` |
-| api | `48721` | `CORS_ORIGIN=http://localhost:43123` |
+## ローカル開発
 
 ### web
 
 ```bash
 cd web
 npm install
-npm run dev
+npm run dev   # http://localhost:43123
 ```
 
-Frontend: single `src/app.css`, `lib/api` · `lib/stores` · `lib/components` · `lib/utils`, thin `routes/`. Details in [web/README.md](web/README.md).
-
-### api
-
-MoonBit-first stack, D1 migrations, sqlc, and curl examples: [api/README.md](api/README.md).
+API を別途起動する場合は `PUBLIC_API_URL=http://localhost:48721` を設定し、API 側で `CORS_ORIGIN=http://localhost:43123` を指定してください。詳細は [web/README.md](web/README.md) を参照。
