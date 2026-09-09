@@ -1,0 +1,13 @@
+{
+  "is-main": true,
+  "link": {
+    "wasm-gc": {
+      "exports": ["normalize", "tokenize", "prepare_query"],
+      "use-js-string-builtin": true,
+      "imported-string-constants": "_"
+    },
+    "wasm": {
+      "exports": ["normalize", "tokenize", "prepare_query"]
+    }
+  }
+}

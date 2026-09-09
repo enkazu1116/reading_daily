@@ -1,0 +1,27 @@
+name = "reading-log-api"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[dev]
+port = 48721
+
+[vars]
+CORS_ORIGIN = "http://localhost:43123"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "reading-log"
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "00000000-0000-0000-0000-000000000000"
+
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = true
+
+[build]
+command = "npm run build:wasm"

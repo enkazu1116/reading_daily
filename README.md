@@ -2,6 +2,11 @@
 
 読書記録アプリ（Cloudflare monorepo）
 
-- `web/` — SvelteKit frontend (Pages)
-- `api/` — Workers API (TypeScript + Moonbit WASM)
-- `infra/` — Terraform
+| Directory | Purpose |
+|-----------|---------|
+| `web/` | SvelteKit frontend (Pages) |
+| `api/` | Workers API — **deploy from here** (TypeScript + Hono + Moonbit WASM) |
+| `infra/` | Terraform (D1, KV, Access, Pages). Worker stub at `infra/worker/` is replaced by `api/` on deploy |
+
+Local ports: frontend **43123**, API **48721**. See `api/README.md` for setup, migrations, and curl examples.
+
