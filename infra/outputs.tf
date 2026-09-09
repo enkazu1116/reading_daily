@@ -14,12 +14,12 @@ output "kv_namespace_id" {
 }
 
 output "api_worker_name" {
-  description = "Workers script name for the API stub."
+  description = "Workers script name (deploy code from api/ via wrangler)."
   value       = cloudflare_workers_script.api.script_name
 }
 
 output "public_api_url" {
-  description = "PUBLIC_API_URL value to set on Pages (also written to deployment_configs)."
+  description = "PUBLIC_API_URL value for Pages."
   value       = local.public_api_url
 }
 
@@ -38,7 +38,12 @@ output "access_application_id" {
   value       = cloudflare_zero_trust_access_application.app.id
 }
 
+output "api_deploy_command" {
+  description = "Deploy real Worker code (replaces Terraform stub)."
+  value       = "cd api && npm install && npm run build:wasm && npm run deploy"
+}
+
 output "migration_command" {
-  description = "Command to apply D1 schema migrations after terraform apply."
-  value       = "wrangler d1 execute ${cloudflare_d1_database.main.name} --remote --file=${path.module}/migrations/0001_init.sql"
+  description = "Apply D1 schema from api/ (source of truth)."
+  value       = "cd api && npm run migrate:remote"
 }

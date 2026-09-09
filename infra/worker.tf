@@ -1,3 +1,7 @@
+# Terraform creates the Worker shell + bindings on first apply.
+# Production CODE is deployed from ../api (wrangler), not from worker/worker.mjs.
+# lifecycle.ignore_changes prevents terraform apply from clobbering wrangler deploys.
+
 resource "cloudflare_workers_script" "api" {
   account_id          = var.account_id
   script_name         = local.api_script_name
@@ -29,6 +33,14 @@ resource "cloudflare_workers_script" "api" {
       text = local.effective_cors_origin
     }
   ]
+
+  lifecycle {
+    ignore_changes = [
+      content_file,
+      content_sha256,
+      main_module,
+    ]
+  }
 
   depends_on = [
     cloudflare_d1_database.main,
