@@ -6,7 +6,7 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 |----------|---------|
 | **Pages** | SvelteKit frontend (`web/`) |
 | **Worker** | Script + bindings named `reading-log-api` (code from `api/` via Wrangler) |
-| **D1** | `readings`, `books`, `search_fts` (`finished_at` included) |
+| **D1** | Database only — schema in `api/migrations/` |
 | **KV** | Google Books / session cache |
 | **Access** | Email allowlist on Pages + API hosts |
 | **Bindings** | `DB` / `CACHE` / `GOOGLE_BOOKS_API_KEY` / `CORS_ORIGIN` |
@@ -27,8 +27,6 @@ First apply may upload the stub at `infra/worker/worker.mjs` so the script and b
 
 ## Deploy real API (required for production)
 
-Do **not** use the stub for production. Deploy from `api/`:
-
 ```sh
 cd api
 npm install
@@ -36,14 +34,17 @@ npm run build:wasm
 npm run deploy
 ```
 
-`worker.tf` uses `lifecycle.ignore_changes` on script content so later `terraform apply` will not overwrite Wrangler deploys. Keep managing D1 / KV / Access / binding *names* in Terraform; keep shipping Worker *code* with Wrangler.
+`worker.tf` uses `lifecycle.ignore_changes` on script content so later `terraform apply` will not overwrite Wrangler deploys.
 
-Schema source of truth: `api/migrations/0001_init.sql` (mirrored under `infra/migrations/` for first-apply helpers).
+## Migrations (single source of truth)
+
+**Only** `api/migrations/` — do not keep a copy under `infra/`.
 
 ```sh
 cd api && npm run migrate:remote
-# or: wrangler d1 execute reading-log --remote --file=./migrations/0001_init.sql
 ```
+
+Optional: `apply_d1_migrations = true` in tfvars runs the same file via `../api/migrations/0001_init.sql`.
 
 Secret:
 
