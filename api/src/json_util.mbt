@@ -1,5 +1,5 @@
 ///|
-pub fn reading_row_to_json(row : @gen.GetReadingByIdRow) -> Json {
+pub fn reading_row_to_json(row : @readings.GetReadingByIdRow) -> Json {
   Json::object({
     "id": Json::string(row.id),
     "userId": Json::string(row.user_id),
@@ -18,7 +18,7 @@ pub fn reading_row_to_json(row : @gen.GetReadingByIdRow) -> Json {
 }
 
 ///|
-pub fn list_reading_row_to_json(row : @gen.ListReadingsByUserRow) -> Json {
+pub fn list_reading_row_to_json(row : @readings.ListReadingsByUserRow) -> Json {
   Json::object({
     "id": Json::string(row.id),
     "userId": Json::string(row.user_id),
@@ -37,7 +37,7 @@ pub fn list_reading_row_to_json(row : @gen.ListReadingsByUserRow) -> Json {
 }
 
 ///|
-pub fn book_row_to_json(row : @gen.GetBookByIdRow) -> Json {
+pub fn book_row_to_json(row : @books.GetBookByIdRow) -> Json {
   book_fields_to_json(
     row.id,
     row.google_books_id,
@@ -51,7 +51,7 @@ pub fn book_row_to_json(row : @gen.GetBookByIdRow) -> Json {
 }
 
 ///|
-pub fn book_google_row_to_json(row : @gen.GetBookByGoogleBooksIdRow) -> Json {
+pub fn book_google_row_to_json(row : @books.GetBookByGoogleBooksIdRow) -> Json {
   book_fields_to_json(
     row.id,
     row.google_books_id,
@@ -91,7 +91,7 @@ fn book_fields_to_json(
 }
 
 ///|
-pub fn search_result_to_json(row : @gen.SearchFtsRow) -> Json {
+pub fn search_result_to_json(row : @fts.SearchFtsRow) -> Json {
   Json::object({
     "doc_type": Json::string(row.doc_type),
     "doc_id": Json::string(row.doc_id),

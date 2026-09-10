@@ -61,59 +61,6 @@
       },
       "required": ["id", "user_id"]
     },
-    "GetBookByGoogleBooksIdParams": {
-      "type": "object",
-      "properties": {
-        "google_books_id": { "type": ["string", "null"] }
-      }
-    },
-    "GetBookByIdParams": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" }
-      },
-      "required": ["id"]
-    },
-    "InsertBookParams": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "google_books_id": { "type": ["string", "null"] },
-        "title": { "type": ["string", "null"] },
-        "authors": { "type": ["string", "null"] },
-        "description": { "type": ["string", "null"] },
-        "thumbnail_url": { "type": ["string", "null"] },
-        "page_count": { "type": ["integer", "null"] },
-        "created_at": { "type": ["string", "null"] }
-      },
-      "required": ["id"]
-    },
-    "DeleteFtsParams": {
-      "type": "object",
-      "properties": {
-        "doc_type": { "type": "string" },
-        "doc_id": { "type": "string" }
-      },
-      "required": ["doc_type", "doc_id"]
-    },
-    "InsertFtsParams": {
-      "type": "object",
-      "properties": {
-        "doc_type": { "type": "string" },
-        "doc_id": { "type": "string" },
-        "user_id": { "type": "string" },
-        "tokens": { "type": "string" }
-      },
-      "required": ["doc_type", "doc_id", "user_id", "tokens"]
-    },
-    "SearchFtsParams": {
-      "type": "object",
-      "properties": {
-        "tokens": { "type": "string" },
-        "user_id": { "type": "string" }
-      },
-      "required": ["tokens", "user_id"]
-    },
     "GetStatsCountsParams": {
       "type": "object",
       "properties": {
@@ -167,43 +114,6 @@
         "updated_at": { "type": ["string", "null"] }
       },
       "required": ["id", "user_id"]
-    },
-    "GetBookByGoogleBooksIdRow": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "google_books_id": { "type": ["string", "null"] },
-        "title": { "type": ["string", "null"] },
-        "authors": { "type": ["string", "null"] },
-        "description": { "type": ["string", "null"] },
-        "thumbnail_url": { "type": ["string", "null"] },
-        "page_count": { "type": ["integer", "null"] },
-        "created_at": { "type": ["string", "null"] }
-      },
-      "required": ["id"]
-    },
-    "GetBookByIdRow": {
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "google_books_id": { "type": ["string", "null"] },
-        "title": { "type": ["string", "null"] },
-        "authors": { "type": ["string", "null"] },
-        "description": { "type": ["string", "null"] },
-        "thumbnail_url": { "type": ["string", "null"] },
-        "page_count": { "type": ["integer", "null"] },
-        "created_at": { "type": ["string", "null"] }
-      },
-      "required": ["id"]
-    },
-    "SearchFtsRow": {
-      "type": "object",
-      "properties": {
-        "doc_type": { "type": "string" },
-        "doc_id": { "type": "string" },
-        "user_id": { "type": "string" }
-      },
-      "required": ["doc_type", "doc_id", "user_id"]
     },
     "GetStatsCountsRow": {
       "type": "object",

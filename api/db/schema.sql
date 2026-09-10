@@ -1,5 +1,6 @@
--- Canonical D1 schema for reading-log API.
+-- Canonical D1 schema for reading-log API (full view).
 -- Source of truth for migrations: api/migrations/0001_init.sql
+-- sqlc inputs are split per domain under db/schema/{readings,books,fts}.sql
 -- Apply locally: npm run migrate:local
 
 CREATE TABLE IF NOT EXISTS readings (

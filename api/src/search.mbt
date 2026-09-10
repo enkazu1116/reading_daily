@@ -18,9 +18,9 @@ async fn handle_search(ctx : @mars.Context) -> Unit raise Error {
     if prepared.length() == 0 {
       ctx.json(Json::object({ "results": Json::array([]) }))
     } else {
-      let rows = @gen.search_fts(
+      let rows = @fts.search_fts(
         db,
-        @gen.SearchFtsParams::new(prepared, user_id),
+        @fts.SearchFtsParams::new(prepared, user_id),
       )
       let results : Array[Json] = []
       for row in rows {

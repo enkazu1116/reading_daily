@@ -1,4 +1,4 @@
--- sqlc query file. Run `npm run db:generate` to regenerate src/db/gen/.
+-- Readings domain queries. Run `npm run db:generate` to regenerate src/db/gen/readings/.
 -- Use anonymous `?` placeholders only (no sqlc.arg mix).
 
 -- name: ListReadingsByUser :many
@@ -73,60 +73,6 @@ WHERE id = ? AND user_id = ?;
 
 -- name: DeleteReading :exec
 DELETE FROM readings WHERE id = ? AND user_id = ?;
-
--- name: GetBookByGoogleBooksId :one
-SELECT
-  id,
-  google_books_id,
-  title,
-  authors,
-  description,
-  thumbnail_url,
-  page_count,
-  created_at
-FROM books
-WHERE google_books_id = ?
-LIMIT 1;
-
--- name: GetBookById :one
-SELECT
-  id,
-  google_books_id,
-  title,
-  authors,
-  description,
-  thumbnail_url,
-  page_count,
-  created_at
-FROM books
-WHERE id = ?
-LIMIT 1;
-
--- name: InsertBook :exec
-INSERT INTO books (
-  id,
-  google_books_id,
-  title,
-  authors,
-  description,
-  thumbnail_url,
-  page_count,
-  created_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-
--- name: DeleteFts :exec
-DELETE FROM search_fts WHERE doc_type = ? AND doc_id = ?;
-
--- name: InsertFts :exec
-INSERT INTO search_fts (doc_type, doc_id, user_id, tokens)
-VALUES (?, ?, ?, ?);
-
--- name: SearchFts :many
-SELECT doc_type, doc_id, user_id
-FROM search_fts
-WHERE tokens MATCH ?
-  AND (user_id = ? OR (doc_type = 'book' AND user_id = ''))
-ORDER BY rank;
 
 -- name: GetStatsCounts :one
 SELECT

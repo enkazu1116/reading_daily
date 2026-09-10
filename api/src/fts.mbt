@@ -40,17 +40,17 @@ pub async fn upsert_fts(
   user_id : String,
   text : String,
 ) -> Unit raise @cloudflare.D1Error {
-  @gen.delete_fts(
+  @fts.delete_fts(
     db,
-    @gen.DeleteFtsParams::new(doc_type, doc_id),
+    @fts.DeleteFtsParams::new(doc_type, doc_id),
   )
   let tokens = tokenize(text)
   if tokens.length() == 0 {
     return
   }
-  @gen.insert_fts(
+  @fts.insert_fts(
     db,
-    @gen.InsertFtsParams::new(doc_type, doc_id, user_id, tokens),
+    @fts.InsertFtsParams::new(doc_type, doc_id, user_id, tokens),
   )
 }
 
@@ -60,5 +60,5 @@ pub async fn delete_fts(
   doc_type : String,
   doc_id : String,
 ) -> Unit raise @cloudflare.D1Error {
-  @gen.delete_fts(db, @gen.DeleteFtsParams::new(doc_type, doc_id))
+  @fts.delete_fts(db, @fts.DeleteFtsParams::new(doc_type, doc_id))
 }

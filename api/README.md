@@ -23,12 +23,16 @@ api/
     main.mbt          # routes + handlers
     worker.ts         # wrangler entry → __appServerFetch
     tokenizer.mbt     # Japanese bigram + ASCII word tokenizer
-    db/gen/           # sqlc output (generated)
+    db/gen/
+      readings/       # sqlc output: readings CRUD + stats
+      books/          # sqlc output: books CRUD
+      fts/            # sqlc output: FTS search index
   db/
-    schema.sql        # canonical schema (mirrors migrations)
-    sqlite/query.sql  # sqlc queries
+    schema.sql        # canonical full schema (mirrors migrations)
+    schema/           # per-domain schema inputs for sqlc
+    sqlite/           # per-domain query inputs for sqlc
   migrations/         # SOURCE OF TRUTH for D1 schema (infra points here)
-  sqlc.yaml
+  sqlc.yaml           # one sqlc package per domain
   wrangler.toml       # main = src/worker.ts
 ```
 

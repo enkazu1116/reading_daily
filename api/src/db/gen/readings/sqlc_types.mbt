@@ -36,37 +36,6 @@ pub struct GetReadingByIdRow {
 } derive(Debug, Eq)
 
 ///|
-pub struct GetBookByGoogleBooksIdRow {
-  id : String
-  google_books_id : String?
-  title : String?
-  authors : String?
-  description : String?
-  thumbnail_url : String?
-  page_count : Int64?
-  created_at : String?
-} derive(Debug, Eq)
-
-///|
-pub struct GetBookByIdRow {
-  id : String
-  google_books_id : String?
-  title : String?
-  authors : String?
-  description : String?
-  thumbnail_url : String?
-  page_count : Int64?
-  created_at : String?
-} derive(Debug, Eq)
-
-///|
-pub struct SearchFtsRow {
-  doc_type : String
-  doc_id : String
-  user_id : String
-} derive(Debug, Eq)
-
-///|
 pub struct GetStatsCountsRow {
   finished : Double?
   reading : Double?
@@ -154,78 +123,6 @@ pub fn DeleteReadingParams::new(id : String, user_id : String) -> DeleteReadingP
 }
 
 ///|
-pub struct GetBookByGoogleBooksIdParams {
-  google_books_id : String?
-} derive(Debug, Eq)
-
-///|
-pub fn GetBookByGoogleBooksIdParams::new(google_books_id : String?) -> GetBookByGoogleBooksIdParams {
-  { google_books_id, }
-}
-
-///|
-pub struct GetBookByIdParams {
-  id : String
-} derive(Debug, Eq)
-
-///|
-pub fn GetBookByIdParams::new(id : String) -> GetBookByIdParams {
-  { id, }
-}
-
-///|
-pub struct InsertBookParams {
-  id : String
-  google_books_id : String?
-  title : String?
-  authors : String?
-  description : String?
-  thumbnail_url : String?
-  page_count : Int64?
-  created_at : String?
-} derive(Debug, Eq)
-
-///|
-pub fn InsertBookParams::new(id : String, google_books_id : String?, title : String?, authors : String?, description : String?, thumbnail_url : String?, page_count : Int64?, created_at : String?) -> InsertBookParams {
-  { id, google_books_id, title, authors, description, thumbnail_url, page_count, created_at }
-}
-
-///|
-pub struct DeleteFtsParams {
-  doc_type : String
-  doc_id : String
-} derive(Debug, Eq)
-
-///|
-pub fn DeleteFtsParams::new(doc_type : String, doc_id : String) -> DeleteFtsParams {
-  { doc_type, doc_id }
-}
-
-///|
-pub struct InsertFtsParams {
-  doc_type : String
-  doc_id : String
-  user_id : String
-  tokens : String
-} derive(Debug, Eq)
-
-///|
-pub fn InsertFtsParams::new(doc_type : String, doc_id : String, user_id : String, tokens : String) -> InsertFtsParams {
-  { doc_type, doc_id, user_id, tokens }
-}
-
-///|
-pub struct SearchFtsParams {
-  tokens : String
-  user_id : String
-} derive(Debug, Eq)
-
-///|
-pub fn SearchFtsParams::new(tokens : String, user_id : String) -> SearchFtsParams {
-  { tokens, user_id }
-}
-
-///|
 pub struct GetStatsCountsParams {
   user_id : String
 } derive(Debug, Eq)
@@ -257,18 +154,6 @@ pub let insert_reading_sql : String = "INSERT INTO readings (\n  id,\n  user_id,
 pub let update_reading_sql : String = "UPDATE readings\nSET\n  book_id = ?,\n  title = ?,\n  author = ?,\n  status = ?,\n  current_page = ?,\n  total_pages = ?,\n  memo = ?,\n  google_books_id = ?,\n  finished_at = ?,\n  updated_at = ?\nWHERE id = ? AND user_id = ?"
 
 pub let delete_reading_sql : String = "DELETE FROM readings WHERE id = ? AND user_id = ?"
-
-pub let get_book_by_google_books_id_sql : String = "SELECT\n  id,\n  google_books_id,\n  title,\n  authors,\n  description,\n  thumbnail_url,\n  page_count,\n  created_at\nFROM books\nWHERE google_books_id = ?\nLIMIT 1"
-
-pub let get_book_by_id_sql : String = "SELECT\n  id,\n  google_books_id,\n  title,\n  authors,\n  description,\n  thumbnail_url,\n  page_count,\n  created_at\nFROM books\nWHERE id = ?\nLIMIT 1"
-
-pub let insert_book_sql : String = "INSERT INTO books (\n  id,\n  google_books_id,\n  title,\n  authors,\n  description,\n  thumbnail_url,\n  page_count,\n  created_at\n) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-
-pub let delete_fts_sql : String = "DELETE FROM search_fts WHERE doc_type = ? AND doc_id = ?"
-
-pub let insert_fts_sql : String = "INSERT INTO search_fts (doc_type, doc_id, user_id, tokens)\nVALUES (?, ?, ?, ?)"
-
-pub let search_fts_sql : String = "SELECT doc_type, doc_id, user_id\nFROM search_fts\nWHERE tokens MATCH ?\n  AND (user_id = ? OR (doc_type = 'book' AND user_id = ''))\nORDER BY rank"
 
 pub let get_stats_counts_sql : String = "SELECT\n  SUM(CASE WHEN status = 'finished' THEN 1 ELSE 0 END) AS finished,\n  SUM(CASE WHEN status = 'reading' THEN 1 ELSE 0 END) AS reading,\n  SUM(CASE WHEN status = 'tsundoku' THEN 1 ELSE 0 END) AS tsundoku\nFROM readings\nWHERE user_id = ?"
 

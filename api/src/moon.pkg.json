@@ -7,6 +7,17 @@
     "mizchi/js/core",
     "moonbitlang/async/js_async",
     "mizchi/x/http",
-    "enkazu1116/reading-log-api/db/gen"
+    {
+      "path": "enkazu1116/reading-log-api/db/gen/readings",
+      "alias": "readings"
+    },
+    {
+      "path": "enkazu1116/reading-log-api/db/gen/books",
+      "alias": "books"
+    },
+    {
+      "path": "enkazu1116/reading-log-api/db/gen/fts",
+      "alias": "fts"
+    }
   ]
 }

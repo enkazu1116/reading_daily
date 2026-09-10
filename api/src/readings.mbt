@@ -35,9 +35,9 @@ async fn handle_list_readings(ctx : @mars.Context) -> Unit raise Error {
   } else {
     let db = get_db().unwrap()
     let user_id = get_user_id(ctx).unwrap()
-    let rows = @gen.list_readings_by_user(
+    let rows = @readings.list_readings_by_user(
       db,
-      @gen.ListReadingsByUserParams::new(user_id),
+      @readings.ListReadingsByUserParams::new(user_id),
     )
     let readings : Array[Json] = []
     for row in rows {
@@ -74,9 +74,9 @@ async fn handle_create_reading(ctx : @mars.Context) -> Unit raise Error {
         None
       }
       let id = random_uuid()
-      @gen.insert_reading(
+      @readings.insert_reading(
         db,
-        @gen.InsertReadingParams::new(
+        @readings.InsertReadingParams::new(
           id,
           user_id,
           optional_string_field(body, "bookId"),
@@ -98,9 +98,9 @@ async fn handle_create_reading(ctx : @mars.Context) -> Unit raise Error {
           Some(timestamp),
         ),
       )
-      if @gen.get_reading_by_id(
+      if @readings.get_reading_by_id(
         db,
-        @gen.GetReadingByIdParams::new(id, user_id),
+        @readings.GetReadingByIdParams::new(id, user_id),
       ) is Some(saved) {
         upsert_fts(
           db,
@@ -164,18 +164,18 @@ async fn handle_create_reading_from_book(ctx : @mars.Context) -> Unit raise Erro
       Ok(None) =>
         ctx.json(Json::object({ "error": Json::string("Book not found") }), status=404)
       Ok(Some(vol)) => {
-        let book_row : @gen.GetBookByIdRow = match @gen.get_book_by_google_books_id(
+        let book_row : @books.GetBookByIdRow = match @books.get_book_by_google_books_id(
           db,
-          @gen.GetBookByGoogleBooksIdParams::new(Some(vol.google_books_id)),
+          @books.GetBookByGoogleBooksIdParams::new(Some(vol.google_books_id)),
         ) {
           Some(existing) =>
-            @gen.get_book_by_id(db, @gen.GetBookByIdParams::new(existing.id)).unwrap()
+            @books.get_book_by_id(db, @books.GetBookByIdParams::new(existing.id)).unwrap()
           None => {
             let book_id = random_uuid()
             let created_at = now_iso()
-            @gen.insert_book(
+            @books.insert_book(
               db,
-              @gen.InsertBookParams::new(
+              @books.InsertBookParams::new(
                 book_id,
                 Some(vol.google_books_id),
                 vol.title,
@@ -196,14 +196,14 @@ async fn handle_create_reading_from_book(ctx : @mars.Context) -> Unit raise Erro
               "",
               book_search_text(vol.title, vol.authors, vol.description),
             )
-            @gen.get_book_by_id(db, @gen.GetBookByIdParams::new(book_id)).unwrap()
+            @books.get_book_by_id(db, @books.GetBookByIdParams::new(book_id)).unwrap()
           }
         }
         let id = random_uuid()
         let timestamp = now_iso()
-        @gen.insert_reading(
+        @readings.insert_reading(
           db,
-          @gen.InsertReadingParams::new(
+          @readings.InsertReadingParams::new(
             id,
             user_id,
             Some(book_row.id),
@@ -222,9 +222,9 @@ async fn handle_create_reading_from_book(ctx : @mars.Context) -> Unit raise Erro
             Some(timestamp),
           ),
         )
-        let reading = @gen.get_reading_by_id(
+        let reading = @readings.get_reading_by_id(
           db,
-          @gen.GetReadingByIdParams::new(id, user_id),
+          @readings.GetReadingByIdParams::new(id, user_id),
         ).unwrap()
         upsert_fts(
           db,
@@ -258,9 +258,9 @@ async fn handle_get_reading(ctx : @mars.Context) -> Unit raise Error {
     let db = get_db().unwrap()
     let user_id = get_user_id(ctx).unwrap()
     let id = ctx.param("id").unwrap_or("")
-    match @gen.get_reading_by_id(
+    match @readings.get_reading_by_id(
       db,
-      @gen.GetReadingByIdParams::new(id, user_id),
+      @readings.GetReadingByIdParams::new(id, user_id),
     ) {
       Some(reading) =>
         ctx.json(Json::object({ "reading": reading_row_to_json(reading) }))
@@ -285,15 +285,15 @@ async fn handle_patch_reading(ctx : @mars.Context) -> Unit raise Error {
     let user_id = get_user_id(ctx).unwrap()
     let id = ctx.param("id").unwrap_or("")
     let body = ctx.body_json().unwrap()
-    if @gen.get_reading_by_id(
+    if @readings.get_reading_by_id(
       db,
-      @gen.GetReadingByIdParams::new(id, user_id),
+      @readings.GetReadingByIdParams::new(id, user_id),
     ) is None {
       ctx.json(Json::object({ "error": Json::string("Not found") }), status=404)
     } else {
-      let current = @gen.get_reading_by_id(
+      let current = @readings.get_reading_by_id(
         db,
-        @gen.GetReadingByIdParams::new(id, user_id),
+        @readings.GetReadingByIdParams::new(id, user_id),
       ).unwrap()
       let status_field = optional_string_field(body, "status")
       if status_field is Some(s) && !is_valid_status(s) {
@@ -309,9 +309,9 @@ async fn handle_patch_reading(ctx : @mars.Context) -> Unit raise Error {
           now_iso(),
         )
         let updated_at = now_iso()
-        @gen.update_reading(
+        @readings.update_reading(
           db,
-          @gen.UpdateReadingParams::new(
+          @readings.UpdateReadingParams::new(
             opt_string(optional_string_field(body, "bookId"), current.book_id),
             opt_string(optional_string_field(body, "title"), current.title),
             opt_string(optional_string_field(body, "author"), current.author),
@@ -332,9 +332,9 @@ async fn handle_patch_reading(ctx : @mars.Context) -> Unit raise Error {
             user_id,
           ),
         )
-        let updated = @gen.get_reading_by_id(
+        let updated = @readings.get_reading_by_id(
           db,
-          @gen.GetReadingByIdParams::new(id, user_id),
+          @readings.GetReadingByIdParams::new(id, user_id),
         ).unwrap()
         upsert_fts(
           db,
@@ -362,14 +362,14 @@ async fn handle_delete_reading(ctx : @mars.Context) -> Unit raise Error {
     let db = get_db().unwrap()
     let user_id = get_user_id(ctx).unwrap()
     let id = ctx.param("id").unwrap_or("")
-    if @gen.get_reading_by_id(
+    if @readings.get_reading_by_id(
       db,
-      @gen.GetReadingByIdParams::new(id, user_id),
+      @readings.GetReadingByIdParams::new(id, user_id),
     ) is None {
       ctx.json(Json::object({ "error": Json::string("Not found") }), status=404)
     } else {
       delete_fts(db, "reading", id)
-      @gen.delete_reading(db, @gen.DeleteReadingParams::new(id, user_id))
+      @readings.delete_reading(db, @readings.DeleteReadingParams::new(id, user_id))
       ctx.text("", status=204)
     }
   }

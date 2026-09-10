@@ -4,8 +4,7 @@
 ///|
 /// Patched in by scripts/patch-int64-binds.ts after every `sqlc generate`.
 /// Wraps Int64 values as JS Number before passing them to D1.bind() so
-/// the BigInt → bind hang (docs/regression/worker-deploy.md §Int64-bind hang) doesn't recur. See ../db_bind_safe.mbt
-/// for the long-form note and the upstream sqlc-gen-moonbit issue.
+/// the BigInt → bind hang (docs/regression/worker-deploy.md §Int64-bind hang) doesn't recur.
 extern "js" fn int64_bind_safe(value : Int64) -> @core.Any =
   #| (n) => Number(n)
 
@@ -184,118 +183,6 @@ pub async fn update_reading(db : @cloudflare.D1Database, params : UpdateReadingP
 pub async fn delete_reading(db : @cloudflare.D1Database, params : DeleteReadingParams) -> Unit raise @cloudflare.D1Error {
   let stmt = db.prepare(delete_reading_sql).bind([@core.any(params.id), @core.any(params.user_id)])
   stmt.run() |> ignore
-}
-
-///| GetBookByGoogleBooksId
-/// SELECT
-///   id,
-///   google_books_id,
-///   title,
-///   authors,
-///   description,
-///   thumbnail_url,
-///   page_count,
-///   created_at
-/// FROM books
-/// WHERE google_books_id = ?
-/// LIMIT 1
-pub async fn get_book_by_google_books_id(db : @cloudflare.D1Database, params : GetBookByGoogleBooksIdParams) -> GetBookByGoogleBooksIdRow? raise @cloudflare.D1Error {
-  let stmt = db.prepare(get_book_by_google_books_id_sql).bind([(match params.google_books_id { Some(v) => @core.any(v); None => @core.null() })])
-  match stmt.first() {
-    None => None
-    Some(result) => Some({
-      id: d1_require_field(result, "id").cast(),
-      google_books_id: (if @core.is_null(result["google_books_id"]) || @core.typeof_(result["google_books_id"]) == "undefined" { None } else { Some(result["google_books_id"].cast()) }),
-      title: (if @core.is_null(result["title"]) || @core.typeof_(result["title"]) == "undefined" { None } else { Some(result["title"].cast()) }),
-      authors: (if @core.is_null(result["authors"]) || @core.typeof_(result["authors"]) == "undefined" { None } else { Some(result["authors"].cast()) }),
-      description: (if @core.is_null(result["description"]) || @core.typeof_(result["description"]) == "undefined" { None } else { Some(result["description"].cast()) }),
-      thumbnail_url: (if @core.is_null(result["thumbnail_url"]) || @core.typeof_(result["thumbnail_url"]) == "undefined" { None } else { Some(result["thumbnail_url"].cast()) }),
-      page_count: (if @core.is_null(result["page_count"]) || @core.typeof_(result["page_count"]) == "undefined" { None } else { Some(d1_read_int64(result["page_count"])) }),
-      created_at: (if @core.is_null(result["created_at"]) || @core.typeof_(result["created_at"]) == "undefined" { None } else { Some(result["created_at"].cast()) }),
-    })
-  }
-}
-
-///| GetBookById
-/// SELECT
-///   id,
-///   google_books_id,
-///   title,
-///   authors,
-///   description,
-///   thumbnail_url,
-///   page_count,
-///   created_at
-/// FROM books
-/// WHERE id = ?
-/// LIMIT 1
-pub async fn get_book_by_id(db : @cloudflare.D1Database, params : GetBookByIdParams) -> GetBookByIdRow? raise @cloudflare.D1Error {
-  let stmt = db.prepare(get_book_by_id_sql).bind([@core.any(params.id)])
-  match stmt.first() {
-    None => None
-    Some(result) => Some({
-      id: d1_require_field(result, "id").cast(),
-      google_books_id: (if @core.is_null(result["google_books_id"]) || @core.typeof_(result["google_books_id"]) == "undefined" { None } else { Some(result["google_books_id"].cast()) }),
-      title: (if @core.is_null(result["title"]) || @core.typeof_(result["title"]) == "undefined" { None } else { Some(result["title"].cast()) }),
-      authors: (if @core.is_null(result["authors"]) || @core.typeof_(result["authors"]) == "undefined" { None } else { Some(result["authors"].cast()) }),
-      description: (if @core.is_null(result["description"]) || @core.typeof_(result["description"]) == "undefined" { None } else { Some(result["description"].cast()) }),
-      thumbnail_url: (if @core.is_null(result["thumbnail_url"]) || @core.typeof_(result["thumbnail_url"]) == "undefined" { None } else { Some(result["thumbnail_url"].cast()) }),
-      page_count: (if @core.is_null(result["page_count"]) || @core.typeof_(result["page_count"]) == "undefined" { None } else { Some(d1_read_int64(result["page_count"])) }),
-      created_at: (if @core.is_null(result["created_at"]) || @core.typeof_(result["created_at"]) == "undefined" { None } else { Some(result["created_at"].cast()) }),
-    })
-  }
-}
-
-///| InsertBook
-/// INSERT INTO books (
-///   id,
-///   google_books_id,
-///   title,
-///   authors,
-///   description,
-///   thumbnail_url,
-///   page_count,
-///   created_at
-/// ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-pub async fn insert_book(db : @cloudflare.D1Database, params : InsertBookParams) -> Unit raise @cloudflare.D1Error {
-  let stmt = db.prepare(insert_book_sql).bind([@core.any(params.id), (match params.google_books_id { Some(v) => @core.any(v); None => @core.null() }), (match params.title { Some(v) => @core.any(v); None => @core.null() }), (match params.authors { Some(v) => @core.any(v); None => @core.null() }), (match params.description { Some(v) => @core.any(v); None => @core.null() }), (match params.thumbnail_url { Some(v) => @core.any(v); None => @core.null() }), (match params.page_count { Some(v) => d1_bind_int64(v); None => @core.null() }), (match params.created_at { Some(v) => @core.any(v); None => @core.null() })])
-  stmt.run() |> ignore
-}
-
-///| DeleteFts
-/// DELETE FROM search_fts WHERE doc_type = ? AND doc_id = ?
-pub async fn delete_fts(db : @cloudflare.D1Database, params : DeleteFtsParams) -> Unit raise @cloudflare.D1Error {
-  let stmt = db.prepare(delete_fts_sql).bind([@core.any(params.doc_type), @core.any(params.doc_id)])
-  stmt.run() |> ignore
-}
-
-///| InsertFts
-/// INSERT INTO search_fts (doc_type, doc_id, user_id, tokens)
-/// VALUES (?, ?, ?, ?)
-pub async fn insert_fts(db : @cloudflare.D1Database, params : InsertFtsParams) -> Unit raise @cloudflare.D1Error {
-  let stmt = db.prepare(insert_fts_sql).bind([@core.any(params.doc_type), @core.any(params.doc_id), @core.any(params.user_id), @core.any(params.tokens)])
-  stmt.run() |> ignore
-}
-
-///| SearchFts
-/// SELECT doc_type, doc_id, user_id
-/// FROM search_fts
-/// WHERE tokens MATCH ?
-///   AND (user_id = ? OR (doc_type = 'book' AND user_id = ''))
-/// ORDER BY rank
-pub async fn search_fts(db : @cloudflare.D1Database, params : SearchFtsParams) -> Array[SearchFtsRow] raise @cloudflare.D1Error {
-  let stmt = db.prepare(search_fts_sql).bind([@core.any(params.tokens), @core.any(params.user_id)])
-  let d1_result = stmt.all()
-  let results_arr = d1_result.get_results()
-  let results : Array[SearchFtsRow] = []
-  for row in results_arr {
-    results.push({
-      doc_type: d1_require_field(row, "doc_type").cast(),
-      doc_id: d1_require_field(row, "doc_id").cast(),
-      user_id: d1_require_field(row, "user_id").cast(),
-    })
-  }
-  results
 }
 
 ///| GetStatsCounts

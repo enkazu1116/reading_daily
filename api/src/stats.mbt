@@ -10,14 +10,14 @@ async fn handle_stats(ctx : @mars.Context) -> Unit raise Error {
   } else {
     let db = get_db().unwrap()
     let user_id = get_user_id(ctx).unwrap()
-    let counts_row = @gen.get_stats_counts(
+    let counts_row = @readings.get_stats_counts(
       db,
-      @gen.GetStatsCountsParams::new(user_id),
+      @readings.GetStatsCountsParams::new(user_id),
     )
     let (start, end) = jst_month_range()
-    let pages_row = @gen.get_stats_pages_this_month(
+    let pages_row = @readings.get_stats_pages_this_month(
       db,
-      @gen.GetStatsPagesThisMonthParams::new(user_id, Some(start), Some(end)),
+      @readings.GetStatsPagesThisMonthParams::new(user_id, Some(start), Some(end)),
     )
     let finished = match counts_row {
       Some(row) =>

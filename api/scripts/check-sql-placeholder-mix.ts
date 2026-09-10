@@ -7,20 +7,19 @@
 // appear in the same statement, a trailing anonymous `?` can land on a
 // number higher than the bind-array length, and D1 returns a parameter
 // count mismatch (surfaces as 500 on the public memory handler).
-// See the placeholder-mix bug (see `docs/regression/worker-deploy.md`) for the GetOwnerMemoryByHashRange repro.
 //
 // Rule: within a single -- name: ... statement, use either pure
-// anonymous `?` or pure `sqlc.arg(...)`. Pure `?N` numbered is fine on
-// its own but we don't expect query.sql authors to write `?N` by hand;
-// flag any mix as the dangerous case.
+// anonymous `?` or pure `sqlc.arg(...)`.
 
+import { existsSync, readdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 
-const QUERY_SQL = new URL("../db/sqlite/query.sql", import.meta.url);
+const sqliteRoot = resolve(import.meta.dirname, "..", "db", "sqlite");
 
-function splitStatements(text) {
-  const statements = [];
-  let current = null;
+function splitStatements(text: string) {
+  const statements: { name: string; lines: string[] }[] = [];
+  let current: { name: string; lines: string[] } | null = null;
   for (const rawLine of text.split("\n")) {
     const nameMatch = rawLine.match(/^--\s*name:\s*(\S+)/);
     if (nameMatch) {
@@ -34,7 +33,7 @@ function splitStatements(text) {
   return statements;
 }
 
-function stripStringsAndComments(body) {
+function stripStringsAndComments(body: string) {
   let out = "";
   let i = 0;
   while (i < body.length) {
@@ -64,8 +63,8 @@ function stripStringsAndComments(body) {
   return out;
 }
 
-function findOffenders(statements) {
-  const offenders = [];
+function findOffenders(statements: { name: string; lines: string[] }[]) {
+  const offenders: string[] = [];
   for (const stmt of statements) {
     const body = stripStringsAndComments(stmt.lines.join("\n"));
     const hasAnonymous = /\?(?!\d)/.test(body);
@@ -77,24 +76,54 @@ function findOffenders(statements) {
   return offenders;
 }
 
+async function discoverQueryFiles(): Promise<string[]> {
+  if (!existsSync(sqliteRoot)) return [];
+  const files: string[] = [];
+  for (const entry of readdirSync(sqliteRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const queryPath = resolve(sqliteRoot, entry.name, "query.sql");
+    if (existsSync(queryPath)) files.push(queryPath);
+  }
+  return files.sort();
+}
+
 async function main() {
-  const text = await readFile(QUERY_SQL, "utf8");
-  const statements = splitStatements(text);
-  const offenders = findOffenders(statements);
-  if (offenders.length === 0) {
+  const queryFiles = await discoverQueryFiles();
+  if (queryFiles.length === 0) {
+    console.log("check-sql-placeholder-mix: skipped (no domain query.sql files found).");
+    return;
+  }
+
+  let totalStatements = 0;
+  const allOffenders: { file: string; names: string[] }[] = [];
+
+  for (const file of queryFiles) {
+    const text = await readFile(file, "utf8");
+    const statements = splitStatements(text);
+    totalStatements += statements.length;
+    const offenders = findOffenders(statements);
+    if (offenders.length > 0) {
+      allOffenders.push({ file, names: offenders });
+    }
+  }
+
+  if (allOffenders.length === 0) {
     console.log(
-      `check-sql-placeholder-mix: OK (${statements.length} statements scanned, no anonymous-vs-named mixes).`,
+      `check-sql-placeholder-mix: OK (${queryFiles.length} file(s), ${totalStatements} statements scanned, no anonymous-vs-named mixes).`,
     );
     return;
   }
+
   console.error(
-    `check-sql-placeholder-mix: ${offenders.length} statement(s) mix anonymous \`?\` with sqlc.arg(...):`,
+    `check-sql-placeholder-mix: ${allOffenders.length} file(s) with placeholder mixes:`,
   );
-  for (const name of offenders) {
-    console.error(`  - ${name}`);
+  for (const { file, names } of allOffenders) {
+    for (const name of names) {
+      console.error(`  - ${file}: ${name}`);
+    }
   }
   console.error(
-    "Convert remaining `?` to sqlc.arg('<n>') so the generator emits consecutive ?1..?N. See PR #124.",
+    "Convert remaining `?` to sqlc.arg('<n>') so the generator emits consecutive ?1..?N.",
   );
   process.exit(1);
 }
