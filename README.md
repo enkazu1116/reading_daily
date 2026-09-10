@@ -2,35 +2,31 @@
 
 読書記録アプリ（Cloudflare monorepo）
 
-<<<<<<< HEAD
-| Directory | Purpose |
-|-----------|---------|
-| `web/` | SvelteKit frontend (Pages) |
-| `api/` | Workers API — **deploy from here** (MoonBit-first + thin `worker.ts`; see `api/README.md`) |
-| `infra/` | Terraform (D1, KV, Access, Pages). Worker stub at `infra/worker/` is replaced by `api/` on deploy |
-
-Local ports: frontend **43123**, API **48721**. See `api/README.md` for setup, migrations, and curl examples.
-
-=======
 ## 構成
 
-| ディレクトリ | 説明 |
-|-------------|------|
-| `web/` | SvelteKit フロントエンド（Cloudflare Pages） |
-| `api/` | Workers API（TypeScript + Moonbit WASM） |
-| `infra/` | Terraform |
+| Directory | Purpose |
+|-----------|---------|
+| `web/` | SvelteKit frontend (Cloudflare Pages) — see [web/README.md](web/README.md) |
+| `api/` | Workers API — **deploy from here** (MoonBit-first + thin `worker.ts`; see [api/README.md](api/README.md)) |
+| `infra/` | Terraform (D1, KV, Access, Pages). Worker stub at `infra/worker/` is replaced by `api/` on deploy |
 
-各ディレクトリは独立して開発・デプロイできます。`web/` は現時点で実装済みです。
+## Local development
 
-## ローカル開発
+| Service | Port | Notes |
+|---------|------|-------|
+| web | `43123` | `PUBLIC_API_URL=http://localhost:48721` |
+| api | `48721` | `CORS_ORIGIN=http://localhost:43123` |
 
 ### web
 
 ```bash
 cd web
 npm install
-npm run dev   # http://localhost:43123
+npm run dev
 ```
 
-API を別途起動する場合は `PUBLIC_API_URL=http://localhost:48721` を設定し、API 側で `CORS_ORIGIN=http://localhost:43123` を指定してください。詳細は [web/README.md](web/README.md) を参照。
->>>>>>> 73198f4 (Add SvelteKit reading-record frontend under web/)
+Frontend: single `src/app.css`, `lib/api` · `lib/stores` · `lib/components` · `lib/utils`, thin `routes/`. Details in [web/README.md](web/README.md).
+
+### api
+
+MoonBit-first stack, D1 migrations, sqlc, and curl examples: [api/README.md](api/README.md).
