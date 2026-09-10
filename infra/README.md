@@ -5,7 +5,7 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 | Resource | Purpose |
 |----------|---------|
 | **Pages** | SvelteKit frontend (`web/`) |
-| **Worker** | Script + bindings named `reading-log-api` (code from `api/` via Wrangler) |
+| **Worker** | Script + bindings named `reading-log-api` (MoonBit-first code from `api/` via Wrangler) |
 | **D1** | Database only — schema in `api/migrations/` |
 | **KV** | Google Books / session cache |
 | **Access** | Email allowlist on Pages + API hosts |
@@ -27,14 +27,19 @@ First apply may upload the stub at `infra/worker/worker.mjs` so the script and b
 
 ## Deploy real API (required for production)
 
+MoonBit-first Worker ([PR #4](https://github.com/enkazu1116/reading_daily/pull/4) / starterkit pattern):
+
+- Wrangler `main` = `api/src/worker.ts` (thin TS → MoonBit `__appServerFetch`)
+- Business logic in `api/src/main.mbt` (mars)
+
 ```sh
 cd api
 npm install
-npm run build:wasm
-npm run deploy
+moon update   # MoonBit toolchain
+npm run deploy   # moon build + wrangler deploy
 ```
 
-`worker.tf` uses `lifecycle.ignore_changes` on script content so later `terraform apply` will not overwrite Wrangler deploys.
+`worker.tf` uses `lifecycle.ignore_changes` on script content so later `terraform apply` will not overwrite Wrangler deploys. Resources and binding **names** stay in Terraform; Worker **code** ships from `api/`.
 
 ## Migrations (single source of truth)
 
@@ -44,7 +49,7 @@ npm run deploy
 cd api && npm run migrate:remote
 ```
 
-Optional: `apply_d1_migrations = true` in tfvars runs the same file via `../api/migrations/0001_init.sql`.
+Optional: `apply_d1_migrations = true` in tfvars runs `../api/migrations/0001_init.sql`.
 
 Secret:
 

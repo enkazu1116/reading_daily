@@ -1,5 +1,5 @@
 # Terraform creates the Worker shell + bindings on first apply.
-# Production CODE is deployed from ../api (wrangler), not from worker/worker.mjs.
+# Production CODE is deployed from ../api (wrangler main = src/worker.ts → MoonBit).
 # lifecycle.ignore_changes prevents terraform apply from clobbering wrangler deploys.
 
 resource "cloudflare_workers_script" "api" {

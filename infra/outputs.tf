@@ -14,7 +14,7 @@ output "kv_namespace_id" {
 }
 
 output "api_worker_name" {
-  description = "Workers script name (deploy code from api/ via wrangler)."
+  description = "Workers script name (deploy code from api/ via wrangler; main = src/worker.ts)."
   value       = cloudflare_workers_script.api.script_name
 }
 
@@ -39,8 +39,8 @@ output "access_application_id" {
 }
 
 output "api_deploy_command" {
-  description = "Deploy real Worker code (replaces Terraform stub)."
-  value       = "cd api && npm install && npm run build:wasm && npm run deploy"
+  description = "Deploy MoonBit-first Worker (wrangler main = api/src/worker.ts)."
+  value       = "cd api && npm install && moon update && npm run deploy"
 }
 
 output "migration_command" {
