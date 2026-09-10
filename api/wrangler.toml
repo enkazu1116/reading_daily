@@ -1,0 +1,21 @@
+name = "reading-log-api"
+# MoonBit-first entry: thin TS forwards to __appServerFetch registered by src/main.mbt
+main = "src/worker.ts"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[dev]
+port = 48721
+
+[vars]
+CORS_ORIGIN = "http://localhost:43123"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "reading-log"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "00000000-0000-0000-0000-000000000000"

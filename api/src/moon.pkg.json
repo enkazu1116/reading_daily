@@ -1,0 +1,12 @@
+{
+  "is-main": true,
+  "import": [
+    "mizchi/mars",
+    "mizchi/cloudflare",
+    "mizchi/js",
+    "mizchi/js/core",
+    "moonbitlang/async/js_async",
+    "mizchi/x/http",
+    "enkazu1116/reading-log-api/db/gen"
+  ]
+}

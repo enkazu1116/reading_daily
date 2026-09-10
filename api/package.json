@@ -1,0 +1,28 @@
+{
+  "name": "reading-log-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MoonBit-first Cloudflare Worker API for reading_daily",
+  "scripts": {
+    "build": "npm run db:verify && moon build --target js --release && wrangler deploy --dry-run --outdir=dist && node --experimental-strip-types scripts/check-worker-bundle.ts dist/worker.js",
+    "clean": "rm -rf dist _build",
+    "check": "moon check --target js && tsc --noEmit",
+    "db:compile": "sqlc compile",
+    "db:generate": "sqlc generate",
+    "db:verify": "node --experimental-strip-types scripts/check-sql-placeholder-mix.ts",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:dry-run": "npm run build",
+    "migrate:local": "wrangler d1 execute reading-log --local --file=./migrations/0001_init.sql",
+    "migrate:remote": "wrangler d1 execute reading-log --remote --file=./migrations/0001_init.sql",
+    "typecheck": "tsc --noEmit",
+    "test": "moon test && node scripts/verify.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260908.1",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.13.2"
+  }
+}

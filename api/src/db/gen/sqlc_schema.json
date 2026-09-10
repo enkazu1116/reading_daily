@@ -1,0 +1,224 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ListReadingsByUserParams": {
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" }
+      },
+      "required": ["user_id"]
+    },
+    "GetReadingByIdParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["id", "user_id"]
+    },
+    "InsertReadingParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "created_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] }
+      },
+      "required": ["id", "user_id"]
+    },
+    "UpdateReadingParams": {
+      "type": "object",
+      "properties": {
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] },
+        "id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["id", "user_id"]
+    },
+    "DeleteReadingParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["id", "user_id"]
+    },
+    "GetBookByGoogleBooksIdParams": {
+      "type": "object",
+      "properties": {
+        "google_books_id": { "type": ["string", "null"] }
+      }
+    },
+    "GetBookByIdParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" }
+      },
+      "required": ["id"]
+    },
+    "InsertBookParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "google_books_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "page_count": { "type": ["integer", "null"] },
+        "created_at": { "type": ["string", "null"] }
+      },
+      "required": ["id"]
+    },
+    "DeleteFtsParams": {
+      "type": "object",
+      "properties": {
+        "doc_type": { "type": "string" },
+        "doc_id": { "type": "string" }
+      },
+      "required": ["doc_type", "doc_id"]
+    },
+    "InsertFtsParams": {
+      "type": "object",
+      "properties": {
+        "doc_type": { "type": "string" },
+        "doc_id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "tokens": { "type": "string" }
+      },
+      "required": ["doc_type", "doc_id", "user_id", "tokens"]
+    },
+    "SearchFtsParams": {
+      "type": "object",
+      "properties": {
+        "tokens": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["tokens", "user_id"]
+    },
+    "GetStatsCountsParams": {
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" }
+      },
+      "required": ["user_id"]
+    },
+    "GetStatsPagesThisMonthParams": {
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" },
+        "month_start": { "type": ["string", "null"] },
+        "month_end": { "type": ["string", "null"] }
+      },
+      "required": ["user_id"]
+    },
+    "ListReadingsByUserRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "created_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] }
+      },
+      "required": ["id", "user_id"]
+    },
+    "GetReadingByIdRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "created_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] }
+      },
+      "required": ["id", "user_id"]
+    },
+    "GetBookByGoogleBooksIdRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "google_books_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "page_count": { "type": ["integer", "null"] },
+        "created_at": { "type": ["string", "null"] }
+      },
+      "required": ["id"]
+    },
+    "GetBookByIdRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "google_books_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "page_count": { "type": ["integer", "null"] },
+        "created_at": { "type": ["string", "null"] }
+      },
+      "required": ["id"]
+    },
+    "SearchFtsRow": {
+      "type": "object",
+      "properties": {
+        "doc_type": { "type": "string" },
+        "doc_id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["doc_type", "doc_id", "user_id"]
+    },
+    "GetStatsCountsRow": {
+      "type": "object",
+      "properties": {
+        "finished": { "type": ["number", "null"] },
+        "reading": { "type": ["number", "null"] },
+        "tsundoku": { "type": ["number", "null"] }
+      }
+    },
+    "GetStatsPagesThisMonthRow": {
+      "type": "object",
+      "properties": {
+        "pages_this_month": { "type": "integer" }
+      },
+      "required": ["pages_this_month"]
+    }
+  }
+}
