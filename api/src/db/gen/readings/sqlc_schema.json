@@ -1,0 +1,134 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ListReadingsByUserParams": {
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" }
+      },
+      "required": ["user_id"]
+    },
+    "GetReadingByIdParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["id", "user_id"]
+    },
+    "InsertReadingParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "created_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] }
+      },
+      "required": ["id", "user_id"]
+    },
+    "UpdateReadingParams": {
+      "type": "object",
+      "properties": {
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] },
+        "id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["id", "user_id"]
+    },
+    "DeleteReadingParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["id", "user_id"]
+    },
+    "GetStatsCountsParams": {
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" }
+      },
+      "required": ["user_id"]
+    },
+    "GetStatsPagesThisMonthParams": {
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string" },
+        "month_start": { "type": ["string", "null"] },
+        "month_end": { "type": ["string", "null"] }
+      },
+      "required": ["user_id"]
+    },
+    "ListReadingsByUserRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "created_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] }
+      },
+      "required": ["id", "user_id"]
+    },
+    "GetReadingByIdRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "book_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "author": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "current_page": { "type": ["integer", "null"] },
+        "total_pages": { "type": ["integer", "null"] },
+        "memo": { "type": ["string", "null"] },
+        "google_books_id": { "type": ["string", "null"] },
+        "finished_at": { "type": ["string", "null"] },
+        "created_at": { "type": ["string", "null"] },
+        "updated_at": { "type": ["string", "null"] }
+      },
+      "required": ["id", "user_id"]
+    },
+    "GetStatsCountsRow": {
+      "type": "object",
+      "properties": {
+        "finished": { "type": ["number", "null"] },
+        "reading": { "type": ["number", "null"] },
+        "tsundoku": { "type": ["number", "null"] }
+      }
+    },
+    "GetStatsPagesThisMonthRow": {
+      "type": "object",
+      "properties": {
+        "pages_this_month": { "type": "integer" }
+      },
+      "required": ["pages_this_month"]
+    }
+  }
+}

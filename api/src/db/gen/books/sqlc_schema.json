@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "GetBookByGoogleBooksIdParams": {
+      "type": "object",
+      "properties": {
+        "google_books_id": { "type": ["string", "null"] }
+      }
+    },
+    "GetBookByIdParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" }
+      },
+      "required": ["id"]
+    },
+    "InsertBookParams": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "google_books_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "page_count": { "type": ["integer", "null"] },
+        "created_at": { "type": ["string", "null"] }
+      },
+      "required": ["id"]
+    },
+    "GetBookByGoogleBooksIdRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "google_books_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "page_count": { "type": ["integer", "null"] },
+        "created_at": { "type": ["string", "null"] }
+      },
+      "required": ["id"]
+    },
+    "GetBookByIdRow": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "google_books_id": { "type": ["string", "null"] },
+        "title": { "type": ["string", "null"] },
+        "authors": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "thumbnail_url": { "type": ["string", "null"] },
+        "page_count": { "type": ["integer", "null"] },
+        "created_at": { "type": ["string", "null"] }
+      },
+      "required": ["id"]
+    }
+  }
+}

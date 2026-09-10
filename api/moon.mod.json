@@ -1,0 +1,15 @@
+{
+  "name": "enkazu1116/reading-log-api",
+  "version": "0.1.0",
+  "deps": {
+    "moonbitlang/async": "0.21.3",
+    "mizchi/cloudflare": "0.1.11",
+    "mizchi/js": "0.12.2",
+    "mizchi/mars": "0.3.11",
+    "mizchi/x": "0.5.1"
+  },
+  "source": "src",
+  "preferred-target": "js",
+  "readme": "README.md",
+  "description": "MoonBit-first Cloudflare Worker API for reading_daily"
+}

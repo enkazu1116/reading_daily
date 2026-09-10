@@ -1,0 +1,37 @@
+version: "2"
+plugins:
+  - name: moonbit
+    wasm:
+      url: "https://github.com/mizchi/sqlc_gen_moonbit/releases/download/v0.3.2/sqlc-gen-moonbit.wasm"
+      sha256: "8639024dc5ee7271e1b4a8dfec853e85a72814577d66f30810b64270f7fead05"
+sql:
+  - engine: sqlite
+    schema: "db/schema/readings.sql"
+    queries: "db/sqlite/readings/query.sql"
+    codegen:
+      - plugin: moonbit
+        out: "src/db/gen/readings"
+        options:
+          backend: "d1"
+          validators: true
+          json_schema: true
+  - engine: sqlite
+    schema: "db/schema/books.sql"
+    queries: "db/sqlite/books/query.sql"
+    codegen:
+      - plugin: moonbit
+        out: "src/db/gen/books"
+        options:
+          backend: "d1"
+          validators: true
+          json_schema: true
+  - engine: sqlite
+    schema: "db/schema/fts.sql"
+    queries: "db/sqlite/fts/query.sql"
+    codegen:
+      - plugin: moonbit
+        out: "src/db/gen/fts"
+        options:
+          backend: "d1"
+          validators: true
+          json_schema: true

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "DeleteFtsParams": {
+      "type": "object",
+      "properties": {
+        "doc_type": { "type": "string" },
+        "doc_id": { "type": "string" }
+      },
+      "required": ["doc_type", "doc_id"]
+    },
+    "InsertFtsParams": {
+      "type": "object",
+      "properties": {
+        "doc_type": { "type": "string" },
+        "doc_id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "tokens": { "type": "string" }
+      },
+      "required": ["doc_type", "doc_id", "user_id", "tokens"]
+    },
+    "SearchFtsParams": {
+      "type": "object",
+      "properties": {
+        "tokens": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["tokens", "user_id"]
+    },
+    "SearchFtsRow": {
+      "type": "object",
+      "properties": {
+        "doc_type": { "type": "string" },
+        "doc_id": { "type": "string" },
+        "user_id": { "type": "string" }
+      },
+      "required": ["doc_type", "doc_id", "user_id"]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+import {
+  "mizchi/js/core",
+  "mizchi/cloudflare",
+}
+
+supported_targets = "js"
+
+options(
+  formatter: {
+    "ignore": [ "sqlc_types.mbt", "sqlc_queries.mbt", "sqlc_validators.mbt" ],
+  },
+)
