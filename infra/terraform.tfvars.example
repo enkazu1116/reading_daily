@@ -1,0 +1,28 @@
+# Copy to terraform.tfvars (gitignored) and fill in values.
+
+cloudflare_api_token = "your-cloudflare-api-token"
+
+account_id = "your-cloudflare-account-id"
+
+# Optional: set when routing the API Worker on a custom hostname in your zone.
+# zone_id      = "your-zone-id"
+# api_hostname = "api.example.com"
+
+# Required when api_hostname is empty — find under Workers → workers.dev in the dashboard.
+workers_dev_subdomain = "your-subdomain"
+
+project_name          = "reading-log"
+production_branch     = "main"
+access_allowed_emails = [
+  "you@example.com",
+]
+
+# Placeholder only; set the real key after apply:
+#   wrangler secret put GOOGLE_BOOKS_API_KEY --name reading-log-api
+# google_books_api_key_placeholder = "replace-me"
+
+# Set true only if wrangler CLI is installed locally.
+# apply_d1_migrations = false
+
+# Empty → https://<project_name>.pages.dev; local e.g. http://localhost:43123
+# cors_origin = ""
