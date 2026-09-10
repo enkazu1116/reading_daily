@@ -1,5 +1,5 @@
-import { getStats } from './api';
-import type { Stats } from './types';
+import { getStats } from '$lib/api';
+import type { Stats } from '$lib/api/types';
 
 const emptyStats: Stats = {
 	finished: 0,
@@ -12,10 +12,6 @@ export const stats = $state<Stats>({ ...emptyStats });
 
 export async function refreshStats(): Promise<void> {
 	try {
-		stats.finished = 0;
-		stats.reading = 0;
-		stats.tsundoku = 0;
-		stats.pagesThisMonth = 0;
 		const data = await getStats();
 		stats.finished = data.finished ?? 0;
 		stats.reading = data.reading ?? 0;

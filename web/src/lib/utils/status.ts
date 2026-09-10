@@ -1,4 +1,4 @@
-import type { ReadingStatus } from './types';
+import type { ReadingStatus } from '$lib/api/types';
 
 export const statusLabels: Record<ReadingStatus, string> = {
 	finished: '読了',
