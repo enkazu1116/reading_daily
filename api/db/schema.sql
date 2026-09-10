@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS readings (
   total_pages INTEGER DEFAULT 0,
   memo TEXT DEFAULT '',
   google_books_id TEXT,
-  finished_at TEXT,
+  finished_at TEXT NULL,
   created_at TEXT,
   updated_at TEXT
 );
