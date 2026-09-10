@@ -80,7 +80,8 @@ GOOGLE_BOOKS_API_KEY=your-key
 |--------|-------------|
 | `npm run build` | `moon build --target js --release` + wrangler dry-run bundle check |
 | `npm run check` | `moon check` + `tsc --noEmit` |
-| `npm run db:generate` | Regenerate `src/db/gen/` from `db/sqlite/query.sql` |
+| `npm run db:generate` | `sqlc generate` + `patch-int64-binds.ts` (Int64 → Number for D1) |
+| `npm run db:verify` | Int64 bind patch `--verify` + SQL placeholder mix check (CI gate) |
 | `npm run dev` | Build + `wrangler dev` on port **48721** |
 | `npm run deploy` | Build + deploy Worker |
 | `npm run deploy:dry-run` | Build only (includes wrangler `--dry-run`) |
