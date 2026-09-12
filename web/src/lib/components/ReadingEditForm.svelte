@@ -51,7 +51,7 @@
 	</label>
 
 	{#if readingDetail.error}
-		<p>{readingDetail.error}</p>
+		<p class="error-message">{readingDetail.error}</p>
 	{/if}
 
 	<div class="actions">
