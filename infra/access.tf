@@ -2,16 +2,16 @@ resource "cloudflare_zero_trust_access_policy" "allowlist" {
   account_id = var.account_id
   name       = "${var.project_name}-allowlist"
   decision   = "allow"
-  precedence = 1
 
-  dynamic "include" {
-    for_each = var.access_allowed_emails
-    content {
+  # Provider v5 reusable policy: include is an attribute list (not a block).
+  # precedence belongs on the application association, not here.
+  include = [
+    for addr in var.access_allowed_emails : {
       email = {
-        email = include.value
+        email = addr
       }
     }
-  }
+  ]
 }
 
 resource "cloudflare_zero_trust_access_application" "app" {
