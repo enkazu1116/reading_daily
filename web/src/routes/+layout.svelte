@@ -14,21 +14,17 @@
 	<title>読書記録</title>
 </svelte:head>
 
-<div class="app">
-	<header>
-		<a href="/">読書記録</a>
-	</header>
-	<main>
-		{@render children()}
-	</main>
+<div class="app-shell">
+	<main>{@render children()}</main>
 </div>
 
 <style>
 	:global(body) {
 		margin: 0;
-		font-family: system-ui, sans-serif;
+		font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif;
 		font-size: 1rem;
 		line-height: 1.5;
+		background: #e8eee7;
 	}
 
 	:global(a) {
@@ -43,24 +39,7 @@
 		font: inherit;
 	}
 
-	.app {
-		max-width: 40rem;
-		margin: 0 auto;
-		padding: 1.5rem 1rem 3rem;
-	}
-
-	header {
-		margin-bottom: 2rem;
-		font-size: 1.25rem;
-	}
-
-	header a {
-		text-decoration: none;
-		font-size: 1.25rem;
-	}
-
 	main {
-		display: grid;
-		gap: 1.5rem;
+		min-height: 100vh;
 	}
 </style>
