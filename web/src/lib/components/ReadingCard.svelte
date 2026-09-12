@@ -5,13 +5,15 @@
 	let { reading }: { reading: Reading } = $props();
 </script>
 
-<a class="reading-card" href="/readings/{reading.id}">
+<a class="library-card" href="/readings/{reading.id}">
 	{#if reading.thumbnailUrl}
-		<img class="reading-card__thumbnail" src={reading.thumbnailUrl} alt="" />
+		<img class="library-card__cover" src={reading.thumbnailUrl} alt="" />
+	{:else}
+		<div class="library-card__cover library-card__cover--placeholder"></div>
 	{/if}
 	<div>
-		<p class="reading-card__title">{reading.title}</p>
-		<p class="reading-card__author">{reading.author}</p>
+		<p class="library-card__title">{reading.title}</p>
+		<p class="library-card__author">{reading.author}</p>
 		<StatusBadge status={reading.status} />
 	</div>
 </a>

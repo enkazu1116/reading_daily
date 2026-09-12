@@ -3,14 +3,14 @@
 	import StatsLine from './StatsLine.svelte';
 </script>
 
-<section class="stack">
+<div class="library-search-row">
 	<input
-		class="input input--search"
+		class="library-search-input"
 		type="search"
-		placeholder="検索"
+		placeholder="本を探す…"
 		bind:value={readingsList.query}
 		aria-label="読書記録を検索"
 	/>
-	<StatsLine />
-	<p><a href="/add">本を追加</a></p>
-</section>
+	<a class="library-add-link" href="/add">＋ 本を追加</a>
+</div>
+<StatsLine />

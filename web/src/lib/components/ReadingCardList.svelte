@@ -5,7 +5,7 @@
 	let { readings }: { readings: Reading[] } = $props();
 </script>
 
-<ul class="card-list">
+<ul class="library-card-list">
 	{#each readings as reading (reading.id)}
 		<li>
 			<ReadingCard {reading} />
