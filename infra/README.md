@@ -31,8 +31,12 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 
 Cloudflare Provider は `CLOUDFLARE_API_TOKEN` 環境変数を自動的に読み取ります（`TF_VAR_*` への変換は不要）。
 
-### 非機密の Terraform 変数
-
+cat > terraform.tfvars <<'EOF'
+account_id               = "<your-cloudflare-account-id>"
+workers_dev_subdomain    = "<your-subdomain>"
+access_allowed_emails    = ["<your-email@example.com>"]
+EOF
+# 必要に応じて、その他の非機密変数も terraform.tfvars に追加
 ```sh
 cd infra
 cp terraform.tfvars.example terraform.tfvars
