@@ -1,27 +1,3 @@
-variable "infisical_workspace_id" {
-  description = "Infisical project ID (Dashboard → Project Settings). Not a secret; override in terraform.tfvars or TF_VAR_infisical_workspace_id if needed."
-  type        = string
-  default     = "5d0b78bf-495f-4f22-ab0e-dbd343181518"
-}
-
-variable "infisical_env_slug" {
-  description = "Infisical environment slug where Cloudflare secrets live (e.g. dev, staging, prod)."
-  type        = string
-  default     = "dev"
-}
-
-variable "infisical_secrets_folder" {
-  description = "Infisical folder path for Terraform secrets (leading slash, e.g. / or /reading_daily)."
-  type        = string
-  default     = "/"
-}
-
-variable "infisical_cloudflare_api_token_secret_name" {
-  description = "Infisical secret name for the Cloudflare API token."
-  type        = string
-  default     = "CLOUDFLARE_API_TOKEN"
-}
-
 variable "account_id" {
   description = "Cloudflare account ID."
   type        = string

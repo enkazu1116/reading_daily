@@ -17,10 +17,10 @@ resource "terraform_data" "d1_migrations" {
     command = "${path.module}/scripts/apply-migrations.sh"
     environment = {
       CLOUDFLARE_ACCOUNT_ID = var.account_id
-      CLOUDFLARE_API_TOKEN  = ephemeral.infisical_secret.cloudflare_api_token.value
       D1_DATABASE_NAME      = cloudflare_d1_database.main.name
       MIGRATION_FILE        = "${path.module}/../api/migrations/0001_init.sql"
     }
+    # CLOUDFLARE_API_TOKEN is inherited from the Terraform process (set by infra/scripts/tf.sh).
   }
 
   depends_on = [cloudflare_d1_database.main]
