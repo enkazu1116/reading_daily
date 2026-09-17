@@ -18,7 +18,8 @@ resource "cloudflare_zero_trust_access_application" "app" {
   account_id = var.account_id
   name       = var.project_name
   type       = "self_hosted"
-  domain     = local.pages_domain
+  # Primary hostname; must already be owned by account_id (Pages project + workers.dev route).
+  domain = local.pages_domain
 
   destinations = [
     for host in local.access_domains : {
@@ -35,4 +36,12 @@ resource "cloudflare_zero_trust_access_application" "app" {
   ]
 
   session_duration = "24h"
+
+  # Error 12130 ("domain does not belong to zone") occurs when Access is created
+  # before the account owns the hostnames, or when account_id / workers_dev_subdomain
+  # refer to different Cloudflare accounts.
+  depends_on = [
+    cloudflare_pages_project.web,
+    cloudflare_workers_script_subdomain.api,
+  ]
 }

@@ -16,7 +16,7 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 ```sh
 cd infra
 cp terraform.tfvars.example terraform.tfvars
-# set account_id, token, workers_dev_subdomain, access_allowed_emails
+# fill in token, account_id, workers_dev_subdomain, access_allowed_emails
 
 terraform init
 terraform plan
@@ -24,6 +24,20 @@ terraform apply
 ```
 
 First apply may upload the stub at `infra/worker/worker.mjs` so the script and bindings exist.
+
+### tfvars の整合性チェック（Access エラー 12130 対策）
+
+`terraform apply` で `cloudflare_zero_trust_access_application` が **12130**（`domain does not belong to zone`）になる場合、API トークンのアカウントとホスト名の所有者が一致していません。`terraform.tfvars` をコミットせず、次を **同じ Cloudflare アカウント** から揃えてください。
+
+| 変数 | 確認方法 |
+|------|----------|
+| `account_id` | API トークンを発行したアカウント ID（Dashboard 右上 → アカウント概要） |
+| `workers_dev_subdomain` | 同アカウント → **Workers** → **workers.dev** に表示されるサブドメイン（例: `enkazu` → `*.enkazu.workers.dev`） |
+| Access 対象ホスト | `terraform plan` の `access_hostnames` 出力: `<project_name>.pages.dev` と `<project_name>-api.<subdomain>.workers.dev` |
+
+よくあるミス: 別アカウントの `account_id` と、手元メモの `workers_dev_subdomain` を混在させる。`plan` 後に `access_hostnames` が意図した URL か確認してから `apply` してください。
+
+Access は Pages プロジェクトと `workers.dev` ルート作成後に作成されます（`access.tf` の `depends_on`）。初回 apply では D1 → Worker → Pages → Access の順で進みます。
 
 ## Deploy real API (required for production)
 

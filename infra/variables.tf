@@ -5,7 +5,7 @@ variable "cloudflare_api_token" {
 }
 
 variable "account_id" {
-  description = "Cloudflare account ID."
+  description = "Cloudflare account ID that owns the API token, Pages project, and workers.dev subdomain."
   type        = string
 }
 
@@ -33,9 +33,14 @@ variable "access_allowed_emails" {
 }
 
 variable "workers_dev_subdomain" {
-  description = "Account workers.dev subdomain (Dashboard → Workers → workers.dev). Required when api_hostname is empty."
+  description = "workers.dev slug for the same account as account_id (Dashboard → Workers → workers.dev). Required when api_hostname is empty."
   type        = string
   default     = ""
+
+  validation {
+    condition     = var.api_hostname != "" || var.workers_dev_subdomain != ""
+    error_message = "workers_dev_subdomain is required when api_hostname is empty. It must be the workers.dev slug for the same Cloudflare account as account_id."
+  }
 }
 
 variable "api_hostname" {

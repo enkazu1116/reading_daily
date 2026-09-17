@@ -1,14 +1,21 @@
 # Copy to terraform.tfvars (gitignored) and fill in values.
+#
+# Before apply, confirm all three values come from the SAME Cloudflare account
+# (the one that minted cloudflare_api_token):
+#   1. account_id
+#   2. workers_dev_subdomain  → Dashboard → Workers → workers.dev
+#   3. Access hostnames below   → <project_name>.pages.dev and <project>-api.<subdomain>.workers.dev
 
 cloudflare_api_token = "your-cloudflare-api-token"
 
+# Dashboard → account home → right sidebar, or Workers/Pages URL path segment.
 account_id = "your-cloudflare-account-id"
 
 # Optional: set when routing the API Worker on a custom hostname in your zone.
 # zone_id      = "your-zone-id"
 # api_hostname = "api.example.com"
 
-# Required when api_hostname is empty — find under Workers → workers.dev in the dashboard.
+# Required when api_hostname is empty — must be THIS account's workers.dev slug.
 workers_dev_subdomain = "your-subdomain"
 
 project_name          = "reading-log"

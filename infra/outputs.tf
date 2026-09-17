@@ -38,6 +38,11 @@ output "access_application_id" {
   value       = cloudflare_zero_trust_access_application.app.id
 }
 
+output "access_hostnames" {
+  description = "Hostnames protected by Access. Each must belong to account_id before apply succeeds."
+  value       = local.access_domains
+}
+
 output "api_deploy_command" {
   description = "Deploy MoonBit-first Worker (wrangler main = api/src/worker.ts)."
   value       = "cd api && npm install && moon update && npm run deploy"
