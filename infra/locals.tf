@@ -1,6 +1,6 @@
 locals {
-  api_script_name = "${var.project_name}-api"
-  pages_domain    = "${var.project_name}.pages.dev"
+  api_script_name       = "${var.project_name}-api"
+  pages_domain          = "${var.project_name}.pages.dev"
   effective_cors_origin = var.cors_origin != "" ? var.cors_origin : "https://${local.pages_domain}"
 
   public_api_url = var.api_hostname != "" ? "https://${var.api_hostname}" : (
