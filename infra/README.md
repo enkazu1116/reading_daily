@@ -18,7 +18,14 @@ Terraform は [Infisical Terraform Provider](https://registry.terraform.io/provi
 
 ### 1. Infisical にシークレットを登録
 
-対象プロジェクトの環境（例: `dev`）に、少なくとも次を登録します。
+本リポジトリの既定座標:
+
+| 項目 | 値 |
+|------|-----|
+| プロジェクト / workspace ID | `5d0b78bf-495f-4f22-ab0e-dbd343181518` |
+| 環境 | `dev` |
+
+上記プロジェクトの `dev` 環境に、少なくとも次を登録します。
 
 | シークレット名 | 内容 |
 |----------------|------|
@@ -47,13 +54,14 @@ export INFISICAL_HOST="https://your-infisical.example.com"
 ```sh
 cd infra
 cp terraform.tfvars.example terraform.tfvars
-# infisical_workspace_id, account_id, workers_dev_subdomain, access_allowed_emails などを設定
-# ※ API トークンは Infisical 側のみ
+# account_id, workers_dev_subdomain, access_allowed_emails などを設定
+# ※ API トークンは Infisical 側のみ（tfvars には書かない）
+# ※ infisical_workspace_id / infisical_env_slug は example と variable default に既定値あり
 ```
 
 | 変数 | 説明 |
 |------|------|
-| `infisical_workspace_id` | Infisical プロジェクト ID（Dashboard → Project Settings） |
+| `infisical_workspace_id` | Infisical プロジェクト ID（既定: `5d0b78bf-495f-4f22-ab0e-dbd343181518`） |
 | `infisical_env_slug` | 環境スラッグ（既定: `dev`） |
 | `account_id` | Cloudflare アカウント ID |
 | `workers_dev_subdomain` | workers.dev サブドメイン |
@@ -77,7 +85,7 @@ Provider を使わず CLI で `TF_VAR_*` を渡す運用も可能です（本リ
 
 ```sh
 # Infisical CLI にログイン済みであること
-infisical run --env=dev --projectId="<your-infisical-project-id>" -- \
+infisical run --env=dev --projectId="5d0b78bf-495f-4f22-ab0e-dbd343181518" -- \
   terraform -chdir=infra plan
 ```
 
@@ -94,7 +102,8 @@ export INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET="..."
 # 2) 非機密 tfvars
 cd infra
 cp terraform.tfvars.example terraform.tfvars
-# 編集: infisical_workspace_id, account_id, workers_dev_subdomain, access_allowed_emails
+# 編集: account_id, workers_dev_subdomain, access_allowed_emails
+# （Infisical 座標は既定: project 5d0b78bf-495f-4f22-ab0e-dbd343181518 / env dev）
 
 # 3) apply
 terraform init

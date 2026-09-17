@@ -2,7 +2,7 @@
 # Cloudflare API token is loaded from Infisical — see README.md.
 
 # --- Infisical (where secrets live) ---
-infisical_workspace_id = "your-infisical-project-id"
+infisical_workspace_id = "5d0b78bf-495f-4f22-ab0e-dbd343181518"
 infisical_env_slug     = "dev"
 # infisical_secrets_folder = "/"
 # infisical_cloudflare_api_token_secret_name = "CLOUDFLARE_API_TOKEN"

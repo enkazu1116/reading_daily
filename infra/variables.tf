@@ -1,6 +1,7 @@
 variable "infisical_workspace_id" {
-  description = "Infisical project ID (Dashboard → Project Settings). Not a secret; set in terraform.tfvars or TF_VAR_infisical_workspace_id."
+  description = "Infisical project ID (Dashboard → Project Settings). Not a secret; override in terraform.tfvars or TF_VAR_infisical_workspace_id if needed."
   type        = string
+  default     = "5d0b78bf-495f-4f22-ab0e-dbd343181518"
 }
 
 variable "infisical_env_slug" {
