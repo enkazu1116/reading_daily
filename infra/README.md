@@ -11,19 +11,98 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 | **Access** | Email allowlist on Pages + API hosts |
 | **Bindings** | `DB` / `CACHE` / `GOOGLE_BOOKS_API_KEY` / `CORS_ORIGIN` |
 
-## Quick start
+## シークレット管理（Infisical）
+
+**Cloudflare API トークンなどの機密情報は `terraform.tfvars` に書きません。**  
+Terraform は [Infisical Terraform Provider](https://registry.terraform.io/providers/Infisical/infisical/latest/docs) 経由で、plan/apply 時に Infisical から読み込みます（ephemeral リソース — state に保存されません）。
+
+### 1. Infisical にシークレットを登録
+
+対象プロジェクトの環境（例: `dev`）に、少なくとも次を登録します。
+
+| シークレット名 | 内容 |
+|----------------|------|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API トークン（Workers / Pages / D1 / KV / Zero Trust 権限） |
+
+フォルダはデフォルト `/` です。別フォルダを使う場合は `infisical_secrets_folder` を `terraform.tfvars` で指定します。
+
+### 2. Machine Identity で認証（推奨）
+
+[Universal Auth](https://infisical.com/docs/documentation/platform/identities/universal-auth) のクライアント ID / シークレットを、**シェル環境変数**で渡します（リポジトリや tfvars にコミットしない）。
+
+```sh
+export INFISICAL_AUTH_METHOD="universal"
+export INFISICAL_UNIVERSAL_AUTH_CLIENT_ID="<machine-identity-client-id>"
+export INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET="<machine-identity-client-secret>"
+```
+
+セルフホストの場合:
+
+```sh
+export INFISICAL_HOST="https://your-infisical.example.com"
+```
+
+### 3. 非機密の Terraform 変数
 
 ```sh
 cd infra
 cp terraform.tfvars.example terraform.tfvars
-# set account_id, token, workers_dev_subdomain, access_allowed_emails
+# infisical_workspace_id, account_id, workers_dev_subdomain, access_allowed_emails などを設定
+# ※ API トークンは Infisical 側のみ
+```
 
+| 変数 | 説明 |
+|------|------|
+| `infisical_workspace_id` | Infisical プロジェクト ID（Dashboard → Project Settings） |
+| `infisical_env_slug` | 環境スラッグ（既定: `dev`） |
+| `account_id` | Cloudflare アカウント ID |
+| `workers_dev_subdomain` | workers.dev サブドメイン |
+
+### 4. Terraform の実行
+
+```sh
+cd infra
+terraform init
+terraform fmt -check -recursive
+terraform validate
+terraform plan
+terraform apply
+```
+
+**前提:** Terraform **1.10 以上**（ephemeral リソース用）。
+
+### 代替: Infisical CLI で環境変数を注入
+
+Provider を使わず CLI で `TF_VAR_*` を渡す運用も可能です（本リポジトリの既定は Provider 方式）。
+
+```sh
+# Infisical CLI にログイン済みであること
+infisical run --env=dev --projectId="<your-infisical-project-id>" -- \
+  terraform -chdir=infra plan
+```
+
+CLI 側で `CLOUDFLARE_API_TOKEN` を export し、Terraform 変数にマッピングする場合は、別途 `TF_VAR_` またはラッパースクリプトが必要です。通常は上記 Provider 方式を使ってください。
+
+## Quick start（まとめ）
+
+```sh
+# 1) Infisical 認証
+export INFISICAL_AUTH_METHOD="universal"
+export INFISICAL_UNIVERSAL_AUTH_CLIENT_ID="..."
+export INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET="..."
+
+# 2) 非機密 tfvars
+cd infra
+cp terraform.tfvars.example terraform.tfvars
+# 編集: infisical_workspace_id, account_id, workers_dev_subdomain, access_allowed_emails
+
+# 3) apply
 terraform init
 terraform plan
 terraform apply
 ```
 
-First apply may upload the stub at `infra/worker/worker.mjs` so the script and bindings exist.
+初回 apply では `infra/worker/worker.mjs` のスタブがアップロードされ、スクリプトとバインディングが作成されます。
 
 ## Deploy real API (required for production)
 
@@ -49,9 +128,9 @@ npm run deploy   # moon build + wrangler deploy
 cd api && npm run migrate:remote
 ```
 
-Optional: `apply_d1_migrations = true` in tfvars runs `../api/migrations/0001_init.sql`.
+Optional: `apply_d1_migrations = true` in tfvars runs `../api/migrations/0001_init.sql`（`CLOUDFLARE_API_TOKEN` は Infisical から渡されます）。
 
-Secret:
+Worker 用の Google Books API キー（本番値）:
 
 ```sh
 wrangler secret put GOOGLE_BOOKS_API_KEY --name reading-log-api
