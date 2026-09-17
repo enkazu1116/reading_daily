@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# Run Terraform with secrets injected from Infisical.
+# Run Terraform with the Cloudflare API token fetched from Infisical.
 # Usage: ./scripts/tf.sh [terraform args...]
 #   e.g. ./scripts/tf.sh init
 #        ./scripts/tf.sh plan
 #        ./scripts/tf.sh apply
 #
-# Override Infisical coordinates:
-#   INFISICAL_PROJECT_ID=... INFISICAL_ENV=staging ./scripts/tf.sh plan
+# Required Infisical coordinates:
+#   INFISICAL_PROJECT_ID=... INFISICAL_ENV=... ./scripts/tf.sh plan
 
 set -euo pipefail
 
-INFISICAL_PROJECT_ID="${INFISICAL_PROJECT_ID:-5d0b78bf-495f-4f22-ab0e-dbd343181518}"
-INFISICAL_ENV="${INFISICAL_ENV:-dev}"
+: "${INFISICAL_PROJECT_ID:?INFISICAL_PROJECT_ID is required}"
+: "${INFISICAL_ENV:?INFISICAL_ENV is required}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INFRA_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
@@ -28,7 +28,17 @@ fi
 
 cd "$INFRA_DIR"
 
-exec infisical run \
-  --projectId="${INFISICAL_PROJECT_ID}" \
-  --env="${INFISICAL_ENV}" \
-  -- terraform "$@"
+CLOUDFLARE_API_TOKEN="$(
+  infisical secrets get CLOUDFLARE_API_TOKEN \
+    --projectId="${INFISICAL_PROJECT_ID}" \
+    --env="${INFISICAL_ENV}" \
+    --plain
+)"
+
+if [[ -z "$CLOUDFLARE_API_TOKEN" ]]; then
+  echo "error: CLOUDFLARE_API_TOKEN is empty in Infisical." >&2
+  exit 1
+fi
+
+export CLOUDFLARE_API_TOKEN
+exec terraform "$@"
