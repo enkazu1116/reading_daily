@@ -1,5 +1,6 @@
 # Copy to terraform.tfvars (gitignored). Do NOT put API tokens or other secrets here.
-# CLOUDFLARE_API_TOKEN lives in Infisical (dev) — injected by ./scripts/tf.sh.
+# CLOUDFLARE_API_TOKEN is fetched from Infisical by ./scripts/tf.sh.
+# Set INFISICAL_PROJECT_ID and INFISICAL_ENV in the shell before running it.
 
 # --- Cloudflare (non-secret identifiers) ---
 account_id = "your-cloudflare-account-id"

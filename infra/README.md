@@ -14,14 +14,16 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 ## シークレット管理（Infisical CLI）
 
 **Cloudflare API トークンは `terraform.tfvars` に書きません。**  
-[Infisical CLI](https://infisical.com/docs/cli/overview) の `infisical run` で Terraform プロセスに環境変数を注入し、Terraform / Cloudflare Provider はその値だけを参照します。
+[Infisical CLI](https://infisical.com/docs/cli/overview) の `infisical secrets get` でトークンを取得し、`scripts/tf.sh` が Terraform プロセスの `CLOUDFLARE_API_TOKEN` 環境変数として渡します。トークンをファイルへ保存したり、コマンドライン引数として渡したりはしません。
 
-### Infisical 座標（非機密）
+### Infisical 座標（必須・非機密）
 
-| 項目 | 値 |
-|------|-----|
-| プロジェクト ID | `5d0b78bf-495f-4f22-ab0e-dbd343181518` |
-| 環境 | `dev` |
+リポジトリにはプロジェクト ID と環境名の既定値を持たせません。実行する環境に合わせて、次の環境変数を設定してください。
+
+| 環境変数 | 内容 |
+|----------|------|
+| `INFISICAL_PROJECT_ID` | Infisical のプロジェクト ID |
+| `INFISICAL_ENV` | Infisical の環境スラッグ（例: `dev`、`staging`、`prod`） |
 
 ### Infisical に登録するシークレット
 
@@ -50,28 +52,34 @@ cp terraform.tfvars.example terraform.tfvars
 # 1) Infisical CLI にログイン（初回のみ）
 infisical login
 
-# 2) 非機密 tfvars
+# 2) Infisical の取得元を指定（値は自分の環境に合わせる）
+export INFISICAL_PROJECT_ID="<your-infisical-project-id>"
+export INFISICAL_ENV="dev"
+
+# 3) 非機密 tfvars
 cd infra
 cp terraform.tfvars.example terraform.tfvars
 # 編集: account_id, workers_dev_subdomain, access_allowed_emails
 
-# 3) Terraform（シークレットは Infisical から注入）
+# 4) Terraform（API トークンは Infisical から取得して環境変数で渡す）
 chmod +x scripts/tf.sh
 ./scripts/tf.sh init
 ./scripts/tf.sh plan
 ./scripts/tf.sh apply
 ```
 
-`scripts/tf.sh` は内部で次と同等です:
+`scripts/tf.sh` は、概ね次の処理を行います:
 
 ```sh
-infisical run \
-  --projectId=5d0b78bf-495f-4f22-ab0e-dbd343181518 \
-  --env=dev \
-  -- terraform "$@"
+CLOUDFLARE_API_TOKEN="$(infisical secrets get CLOUDFLARE_API_TOKEN \
+  --projectId="$INFISICAL_PROJECT_ID" \
+  --env="$INFISICAL_ENV" \
+  --plain)"
+export CLOUDFLARE_API_TOKEN
+terraform "$@"
 ```
 
-別プロジェクト / 環境を使う場合:
+プロジェクト ID または環境が未指定なら、誤った取得元を暗黙に使わず実行を中止します。別プロジェクト / 環境を一度だけ使う場合は、コマンドの前で指定できます:
 
 ```sh
 INFISICAL_PROJECT_ID="<other-project-id>" INFISICAL_ENV=staging ./scripts/tf.sh plan
