@@ -87,6 +87,22 @@ if (!content.includes(PATCHED_HASH_SEED_TRY)) {
   process.exit(1);
 }
 
+// mizchi/mars が直書きする古いグローバル名。残っていると最初のリクエストで 500 になる。
+if (content.includes("moonbitlang$async$internal$event_loop$$reschedule();")) {
+  console.error(
+    `worker bundle check: ${target} still calls the stale mars reschedule global. ` +
+      "Run scripts/patch-moonbit-hash-seed.ts after moon build.",
+  );
+  process.exit(1);
+}
+if (!content.includes("event__loop10reschedule")) {
+  console.error(
+    `worker bundle check: ${target} is missing compiled event_loop.reschedule. ` +
+      "MoonBit JS output shape may have changed.",
+  );
+  process.exit(1);
+}
+
 // moonbitlang/core の素の FFI。パッチ前のままバンドルされると isolate 起動で落ちる。
 const FORBIDDEN_UNPATCHED_HASH_SEED = `  if (globalThis.crypto?.getRandomValues) {
     const array = new Uint32Array(1);

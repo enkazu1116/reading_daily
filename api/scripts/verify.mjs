@@ -101,6 +101,15 @@ if (bundle.includes(UNPATCHED_HASH_SEED)) {
 if (!bundle.includes('reading-log: workers-safe-hash-seed')) {
   throw new Error('MoonBit bundle missing workers-safe-hash-seed patch marker');
 }
+if (bundle.includes('moonbitlang$async$internal$event_loop$$reschedule();')) {
+  throw new Error(
+    'MoonBit bundle still calls the stale mars reschedule global. ' +
+      'Run scripts/patch-moonbit-hash-seed.ts after moon build.',
+  );
+}
+if (!bundle.includes('reading-log: workers-mars-reschedule')) {
+  throw new Error('MoonBit bundle missing workers-mars-reschedule patch marker');
+}
 
 // Workers と同じく、モジュール初期化時の getRandomValues が例外を投げる状況を再現する。
 // パッチ後のシード関数は落ちずに数を返す必要がある。
@@ -131,4 +140,4 @@ if (originalGetRandomValues) {
   globalThis.crypto.getRandomValues = originalGetRandomValues;
 }
 
-console.log('verify: finished_at + tokenizer + moon bundle + workers-safe hash seed ok');
+console.log('verify: finished_at + tokenizer + moon bundle + workers-safe hash seed + mars reschedule ok');

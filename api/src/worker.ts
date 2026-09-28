@@ -5,8 +5,9 @@
 // 素の生成コードはここで crypto.getRandomValues を呼ぶが、Workers は
 // グローバルスコープでの乱数生成を禁止している。
 // `scripts/patch-moonbit-hash-seed.ts` が moon build 直後にその呼び出しを
-// try/catch + Math.random フォールバックへ書き換える。この import はその
-// パッチ済みファイルを前提にしている。
+// try/catch + Math.random フォールバックへ書き換える。あわせて mizchi/mars が
+// 直書きする古い `event_loop.reschedule` グローバル名を、今の moonc が出す
+// マングル名へ付け替える。この import はそのパッチ済みファイルを前提にしている。
 
 import "../_build/js/release/build/reading-log-api.js";
 
