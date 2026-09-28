@@ -14,12 +14,12 @@ port = 48721
 CORS_ORIGIN = "https://reading-log.pages.dev"
 
 # 本番 D1（Cloudflare API / Terraform cloudflare_d1_database.main と一致）。
-# wrangler dev は既定でローカルシミュレーションを使う。preview_database_id はローカル用の識別子。
+# preview_database_id は付けない。wrangler deploy --dry-run の表示が preview 側に寄るのを避け、
+# wrangler dev は既定のローカルシミュレーションを使う。
 [[d1_databases]]
 binding = "DB"
 database_name = "reading-log"
 database_id = "fd00233b-8e05-4c50-89e0-6779b25b81b8"
-preview_database_id = "local-reading-log"
 migrations_dir = "migrations"
 
 # 本番 KV（Cloudflare API / Terraform cloudflare_workers_kv_namespace.cache と一致）。
