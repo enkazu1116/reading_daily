@@ -43,9 +43,9 @@ api/
 | `DB` | D1 | database name `reading-log` |
 | `CACHE` | KV | Google Books cache |
 | `GOOGLE_BOOKS_API_KEY` | secret | `wrangler secret put` |
-| `CORS_ORIGIN` | var | default `http://localhost:43123` |
+| `CORS_ORIGIN` | var | 本番は `https://reading-log.pages.dev`。ローカルは `.dev.vars` で `http://localhost:43123` |
 
-Local dev: API **48721**, frontend **43123**.
+Local dev: API **48721**, frontend **43123**。バインディング ID は本番値を `wrangler.toml` に書くが、`wrangler dev` はローカルの D1 / KV を使う。
 
 ## Prerequisites
 
@@ -72,11 +72,14 @@ npm run build
 npm run migrate:local
 ```
 
-Create `.dev.vars`:
+`.dev.vars.example` をコピーして `.dev.vars` を作る（コミットしない）:
 
 ```env
+CORS_ORIGIN=http://localhost:43123
 GOOGLE_BOOKS_API_KEY=your-key
 ```
+
+`.dev.vars` の `CORS_ORIGIN` が `wrangler.toml` の本番 origin より優先される。
 
 ## npm scripts
 

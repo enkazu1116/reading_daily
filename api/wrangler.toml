@@ -7,15 +7,24 @@ compatibility_flags = ["nodejs_compat"]
 [dev]
 port = 48721
 
+# 本番 Web の origin。Pages プロジェクト名は infra の var.project_name（既定 reading-log）。
+# cloudflare_pages_domain 等のカスタムドメインは infra に無いので pages.dev を使う。
+# ローカル開発は .dev.vars の CORS_ORIGIN=http://localhost:43123 で上書きする（.dev.vars.example 参照）。
 [vars]
-CORS_ORIGIN = "http://localhost:43123"
+CORS_ORIGIN = "https://reading-log.pages.dev"
 
+# 本番 D1（Cloudflare API / Terraform cloudflare_d1_database.main と一致）。
+# preview_database_id は付けない。wrangler deploy --dry-run の表示が preview 側に寄るのを避け、
+# wrangler dev は既定のローカルシミュレーションを使う。
 [[d1_databases]]
 binding = "DB"
 database_name = "reading-log"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "fd00233b-8e05-4c50-89e0-6779b25b81b8"
 migrations_dir = "migrations"
 
+# 本番 KV（Cloudflare API / Terraform cloudflare_workers_kv_namespace.cache と一致）。
+# gcp-java-sessions は別プロジェクトなので使わない。
+# preview_id は付けない。wrangler dev はローカル KV を使う。
 [[kv_namespaces]]
 binding = "CACHE"
-id = "00000000-0000-0000-0000-000000000000"
+id = "1993ce985f6f4b00811b3bfc6baea8b4"

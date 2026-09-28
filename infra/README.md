@@ -9,7 +9,7 @@ Cloudflare-only IaC for the reading-log stack on `enkazu1116/reading_daily`.
 | **D1** | Database only — schema in `api/migrations/` |
 | **KV** | Google Books / session cache |
 | **Access** | Email allowlist on Pages + API hosts |
-| **Bindings** | `DB` / `CACHE` / `GOOGLE_BOOKS_API_KEY` / `CORS_ORIGIN` |
+| **Bindings** | 初回のみ Terraform。以降は wrangler（`DB` / `CACHE` / `GOOGLE_BOOKS_API_KEY` / `CORS_ORIGIN`） |
 
 ## シークレット管理（Infisical CLI）
 
@@ -106,7 +106,7 @@ moon update   # MoonBit toolchain
 npm run deploy   # moon build + wrangler deploy
 ```
 
-`worker.tf` uses `lifecycle.ignore_changes` on script content so later `terraform apply` will not overwrite Wrangler deploys. Resources and binding **names** stay in Terraform; Worker **code** ships from `api/`.
+`worker.tf` は `lifecycle.ignore_changes` にスクリプト内容と **bindings** を入れている。初回 apply で Worker シェルとバインディングの箱を作ったあと、コードもバインディングも wrangler（`api/wrangler.toml`）が正。以降の `terraform apply` は wrangler が付けた D1 / KV / `CORS_ORIGIN` / secret を上書きしない。
 
 ## Migrations (single source of truth)
 
@@ -133,4 +133,4 @@ wrangler secret put GOOGLE_BOOKS_API_KEY --name reading-log-api
 | `GOOGLE_BOOKS_API_KEY` | secret |
 | `CORS_ORIGIN` | plain_text (`cors_origin` var; default Pages URL) |
 
-Must match `api/wrangler.toml`.
+初回 apply の種として Terraform にも同じ名前を書く。以降の変更は `api/wrangler.toml` が正（`ignore_changes = [bindings]`）。

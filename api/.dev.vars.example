@@ -1,0 +1,4 @@
+# コピーして .dev.vars を作る（.dev.vars 自体はコミットしない）。
+# wrangler dev はここの値が wrangler.toml の [vars] より優先される。
+CORS_ORIGIN=http://localhost:43123
+GOOGLE_BOOKS_API_KEY=your-key
