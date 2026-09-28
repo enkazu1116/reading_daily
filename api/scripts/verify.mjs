@@ -85,4 +85,50 @@ if (!bundle.includes('__appServerFetch')) {
   throw new Error('MoonBit bundle missing __appServerFetch registration');
 }
 
-console.log('verify: finished_at + tokenizer + moon bundle ok');
+const UNPATCHED_HASH_SEED = `  if (globalThis.crypto?.getRandomValues) {
+    const array = new Uint32Array(1);
+    globalThis.crypto.getRandomValues(array);
+    return array[0] | 0; // Convert to signed 32
+  } else {
+    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
+  }`;
+if (bundle.includes(UNPATCHED_HASH_SEED)) {
+  throw new Error(
+    'MoonBit bundle still has the unpatched Hasher seed (module-init getRandomValues). ' +
+      'Run scripts/patch-moonbit-hash-seed.ts after moon build.',
+  );
+}
+if (!bundle.includes('reading-log: workers-safe-hash-seed')) {
+  throw new Error('MoonBit bundle missing workers-safe-hash-seed patch marker');
+}
+
+// Workers と同じく、モジュール初期化時の getRandomValues が例外を投げる状況を再現する。
+// パッチ後のシード関数は落ちずに数を返す必要がある。
+function workersSafeHashSeed() {
+  try {
+    if (globalThis.crypto?.getRandomValues) {
+      const array = new Uint32Array(1);
+      globalThis.crypto.getRandomValues(array);
+      return array[0] | 0;
+    }
+  } catch {
+    // グローバルスコープ制限。Hasher シードなので Math.random でよい。
+  }
+  return Math.floor(Math.random() * 0x100000000) | 0;
+}
+
+const originalGetRandomValues = globalThis.crypto?.getRandomValues?.bind(globalThis.crypto);
+globalThis.crypto.getRandomValues = () => {
+  throw new Error(
+    'Disallowed operation called within global scope. generating random values are not allowed within global scope.',
+  );
+};
+const seed = workersSafeHashSeed();
+if (typeof seed !== 'number' || !Number.isFinite(seed)) {
+  throw new Error(`expected numeric hash seed after getRandomValues throw, got ${seed}`);
+}
+if (originalGetRandomValues) {
+  globalThis.crypto.getRandomValues = originalGetRandomValues;
+}
+
+console.log('verify: finished_at + tokenizer + moon bundle + workers-safe hash seed ok');
