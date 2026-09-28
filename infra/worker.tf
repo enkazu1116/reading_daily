@@ -1,6 +1,7 @@
-# Terraform creates the Worker shell + bindings on first apply.
-# Production CODE is deployed from ../api (wrangler main = src/worker.ts → MoonBit).
-# lifecycle.ignore_changes prevents terraform apply from clobbering wrangler deploys.
+# Terraform は初回 apply で Worker シェルとバインディングの箱を作る。
+# 本番コードとバインディングの正は ../api の wrangler（main = src/worker.ts → MoonBit）。
+# ignore_changes に bindings を含め、以降の terraform apply が wrangler deploy の
+# D1 / KV / CORS_ORIGIN / secret を上書きしないようにする。
 
 resource "cloudflare_workers_script" "api" {
   account_id          = var.account_id
@@ -39,6 +40,7 @@ resource "cloudflare_workers_script" "api" {
       content_file,
       content_sha256,
       main_module,
+      bindings,
     ]
   }
 

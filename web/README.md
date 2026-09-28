@@ -28,6 +28,8 @@ npm run build
 
 出力: `.svelte-kit/cloudflare`
 
+手動デプロイ手順（`PUBLIC_API_URL` の渡し方を含む）はリポジトリ直下の [README.md](../README.md) の「手動デプロイ」を参照。
+
 ## 画面
 
 - `/` — 検索・統計・読書記録一覧
