@@ -1,5 +1,13 @@
-// Cloudflare Worker entrypoint.
-// wrangler bundles this file + MoonBit JS output into dist/worker.js.
+// Cloudflare Worker の入口。
+// wrangler がこのファイルと MoonBit の JS 出力を dist/worker.js にまとめる。
+//
+// MoonBit の Hasher はモジュール読み込み時に乱数シードを取る。
+// 素の生成コードはここで crypto.getRandomValues を呼ぶが、Workers は
+// グローバルスコープでの乱数生成を禁止している。
+// `scripts/patch-moonbit-hash-seed.ts` が moon build 直後にその呼び出しを
+// try/catch + Math.random フォールバックへ書き換える。あわせて mizchi/mars が
+// 直書きする古い `event_loop.reschedule` グローバル名を、今の moonc が出す
+// マングル名へ付け替える。この import はそのパッチ済みファイルを前提にしている。
 
 import "../_build/js/release/build/reading-log-api.js";
 

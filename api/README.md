@@ -82,7 +82,7 @@ GOOGLE_BOOKS_API_KEY=your-key
 
 | Script | Description |
 |--------|-------------|
-| `npm run build` | `moon build --target js --release` + wrangler dry-run bundle check |
+| `npm run build` | `moon build --target js --release` + Hasher シードの Workers 向けパッチ + wrangler dry-run bundle check |
 | `npm run check` | `moon check` + `tsc --noEmit` |
 | `npm run db:generate` | `sqlc generate` + `patch-int64-binds.ts` (Int64 → Number for D1) |
 | `npm run db:verify` | Int64 bind patch `--verify` + SQL placeholder mix check (CI gate) |
@@ -98,6 +98,8 @@ GOOGLE_BOOKS_API_KEY=your-key
 **Source of truth:** `api/migrations/0001_init.sql` (also mirrored in `db/schema.sql` for sqlc).
 
 `wrangler.toml` sets `migrations_dir = "migrations"` so `infra/` and wrangler stay aligned.
+
+MoonBit の JS 出力は Hasher シード用にモジュール初期化で `crypto.getRandomValues` を呼ぶ。Workers はグローバルスコープでの乱数生成を禁止しているため、`scripts/patch-moonbit-hash-seed.ts` が `moon build` 直後に try/catch + `Math.random` フォールバックへ書き換える（暗号用途の UUID 生成は対象外）。同じスクリプトが mizchi/mars の古い `event_loop.reschedule` グローバル名も、今の moonc のマングル名へ付け替える。
 
 ## Local development
 

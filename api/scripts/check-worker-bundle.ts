@@ -64,7 +64,60 @@ if (usPositions.length > 0) {
 //   const REQUIRED_MARKERS = [
 //     { needle: "globalThis.__appCronTick", reason: "scheduled cron forwarder" },
 //   ];
-const REQUIRED_MARKERS: Array<{ needle: string; reason: string }> = [];
+const REQUIRED_MARKERS: Array<{ needle: string; reason: string }> = [
+  {
+    // esbuild はコメントを落とすので、パッチ後に残る try で囲んだシード初期化を見る。
+    needle: "if (globalThis.crypto?.getRandomValues)",
+    reason: "MoonBit Hasher シード（Workers 向け try/catch パッチ後も残る）",
+  },
+];
+
+// MoonBit Hasher シード: 未パッチだと isolate 起動時に
+// crypto.getRandomValues がグローバルスコープで投げられ、wrangler dev が死ぬ。
+const PATCHED_HASH_SEED_TRY = `try {
+    if (globalThis.crypto?.getRandomValues) {
+      const array = new Uint32Array(1);
+      globalThis.crypto.getRandomValues(array);`;
+if (!content.includes(PATCHED_HASH_SEED_TRY)) {
+  console.error(
+    `worker bundle check: ${target} is missing the try/catch around MoonBit Hasher seed ` +
+      "(module-init crypto.getRandomValues). Isolate startup will fail on Workers. " +
+      "Run scripts/patch-moonbit-hash-seed.ts after moon build.",
+  );
+  process.exit(1);
+}
+
+// mizchi/mars が直書きする古いグローバル名。残っていると最初のリクエストで 500 になる。
+if (content.includes("moonbitlang$async$internal$event_loop$$reschedule();")) {
+  console.error(
+    `worker bundle check: ${target} still calls the stale mars reschedule global. ` +
+      "Run scripts/patch-moonbit-hash-seed.ts after moon build.",
+  );
+  process.exit(1);
+}
+if (!content.includes("event__loop10reschedule")) {
+  console.error(
+    `worker bundle check: ${target} is missing compiled event_loop.reschedule. ` +
+      "MoonBit JS output shape may have changed.",
+  );
+  process.exit(1);
+}
+
+// moonbitlang/core の素の FFI。パッチ前のままバンドルされると isolate 起動で落ちる。
+const FORBIDDEN_UNPATCHED_HASH_SEED = `  if (globalThis.crypto?.getRandomValues) {
+    const array = new Uint32Array(1);
+    globalThis.crypto.getRandomValues(array);
+    return array[0] | 0; // Convert to signed 32
+  } else {
+    return Math.floor(Math.random() * 0x100000000) | 0; // Fallback to Math.random
+  }`;
+if (content.includes(FORBIDDEN_UNPATCHED_HASH_SEED)) {
+  console.error(
+    `worker bundle check: ${target} still contains the unpatched MoonBit Hasher seed ` +
+      "(module-init crypto.getRandomValues). Run scripts/patch-moonbit-hash-seed.ts after moon build.",
+  );
+  process.exit(1);
+}
 for (const marker of REQUIRED_MARKERS) {
   if (!content.includes(marker.needle)) {
     console.error(
